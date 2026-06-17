@@ -19,13 +19,15 @@ const SOURCES = require("./sources");
 
 // ---------- 引数パース ----------
 function parseArgs(argv) {
-  const args = { days: 7, from: null, to: null, open: true };
+  const args = { days: 7, from: null, to: null, open: true, serve: false, port: 3000 };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--days") args.days = parseInt(argv[++i], 10);
     else if (a === "--from") args.from = argv[++i];
     else if (a === "--to") args.to = argv[++i];
     else if (a === "--no-open") args.open = false;
+    else if (a === "--serve") args.serve = true;
+    else if (a === "--port") args.port = parseInt(argv[++i], 10) || 3000;
     else if (a === "--help" || a === "-h") args.help = true;
   }
   return args;
@@ -155,16 +157,10 @@ function parseFeed(xml, source) {
   return items;
 }
 
-// ---------- メイン ----------
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
-  if (args.help) {
-    console.log(fs.readFileSync(__filename, "utf8").split("*/")[0].replace(/\/\*\*?/, ""));
-    return;
-  }
-  const { from, to } = resolveRange(args);
+// ---------- 収集ロジック（コアパイプライン・再利用可能） ----------
+async function collect({ from, to, verbose = true, isServer = false }) {
   const fmt = fmtDate;
-  console.log(`\n📡 EdTechニュース収集中... 期間: ${fmt(from)} 〜 ${fmt(to)}\n`);
+  if (verbose) console.log(`\n📡 EdTechニュース収集中... 期間: ${fmt(from)} 〜 ${fmt(to)}\n`);
 
   const results = await Promise.allSettled(
     SOURCES.map(async (s) => {
@@ -178,39 +174,111 @@ async function main() {
   results.forEach((r, i) => {
     const s = SOURCES[i];
     if (r.status === "fulfilled") {
-      const inRange = r.value.items.filter(
-        (it) => it.date && it.date >= from && it.date <= to
-      );
+      const inRange = r.value.items.filter((it) => it.date && it.date >= from && it.date <= to);
       all = all.concat(inRange);
       status.push({ name: s.name, region: s.region, ok: true, total: r.value.items.length, hit: inRange.length });
-      console.log(`  ✅ ${s.name.padEnd(18)} 取得${String(r.value.items.length).padStart(3)}件 → 期間内${inRange.length}件`);
+      if (verbose) console.log(`  ✅ ${s.name.padEnd(18)} 取得${String(r.value.items.length).padStart(3)}件 → 期間内${inRange.length}件`);
     } else {
       status.push({ name: s.name, region: s.region, ok: false, error: String(r.reason && r.reason.message || r.reason) });
-      console.log(`  ⚠️  ${s.name.padEnd(18)} 取得失敗: ${r.reason && r.reason.message || r.reason}`);
+      if (verbose) console.log(`  ⚠️  ${s.name.padEnd(18)} 取得失敗: ${r.reason && r.reason.message || r.reason}`);
     }
   });
 
-  // 重複除去（URL）
+  // 重複除去 → 日付降順
   const seen = new Set();
   all = all.filter((it) => { if (seen.has(it.link)) return false; seen.add(it.link); return true; });
-  // 日付降順
   all.sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
 
-  const jpCount = all.filter((x) => x.region === "jp").length;
-  const glCount = all.filter((x) => x.region === "global").length;
-  console.log(`\n📰 合計 ${all.length}件（日本 ${jpCount} / 海外 ${glCount}）\n`);
+  if (verbose) {
+    const jp = all.filter((x) => x.region === "jp").length;
+    const gl = all.filter((x) => x.region === "global").length;
+    console.log(`\n📰 合計 ${all.length}件（日本 ${jp} / 海外 ${gl}）\n`);
+  }
 
-  const html = renderHtml({ items: all, from, to, status, fmt });
+  return renderHtml({ items: all, from, to, status, fmt, isServer });
+}
+
+// ---------- 静的生成モード（従来挙動） ----------
+async function generateStatic(args) {
+  const { from, to } = resolveRange(args);
+  const fmt = fmtDate;
+  const html = await collect({ from, to, verbose: true, isServer: false });
   const outDir = path.join(__dirname, "reports");
   fs.mkdirSync(outDir, { recursive: true });
   const outName = `edtech-news_${fmt(from)}_${fmt(to)}.html`;
   const outPath = path.join(outDir, outName);
   fs.writeFileSync(outPath, html, "utf8");
-  // 最新版を index.html としても保存
   fs.writeFileSync(path.join(__dirname, "index.html"), html, "utf8");
   console.log(`✅ レポート生成: ${outPath}\n`);
-
   if (args.open) openInBrowser(outPath);
+}
+
+// ---------- サーバーモード ----------
+const CACHE = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5分
+
+async function startServer(port) {
+  const http = require("http");
+  const url = require("url");
+  const fmt = fmtDate;
+
+  const server = http.createServer(async (req, res) => {
+    const u = url.parse(req.url, true);
+    if (u.pathname !== "/" && u.pathname !== "/index.html") {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("404 Not Found");
+      return;
+    }
+    const args = { days: 7, from: u.query.from || null, to: u.query.to || null };
+    if (u.query.days) args.days = parseInt(u.query.days, 10) || 7;
+    let from, to;
+    try { ({ from, to } = resolveRange(args)); }
+    catch (e) {
+      res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Invalid date range: " + e.message);
+      return;
+    }
+    const key = `${fmt(from)}|${fmt(to)}`;
+    const cached = CACHE.get(key);
+    if (cached && Date.now() - cached.t < CACHE_TTL) {
+      console.log(`  ⚡ キャッシュHIT: ${key}`);
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(cached.html);
+      return;
+    }
+    try {
+      console.log(`\n🔄 リクエスト: ${key}`);
+      const html = await collect({ from, to, verbose: true, isServer: true });
+      CACHE.set(key, { html, t: Date.now() });
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(html);
+    } catch (e) {
+      console.error("Server error:", e);
+      res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Server error: " + e.message);
+    }
+  });
+
+  server.listen(port, () => {
+    const URL = `http://localhost:${port}/`;
+    console.log(`\n🚀 EdTech WEEKLY サーバー起動: ${URL}`);
+    console.log(`   📅 期間: URLパラメータ ?from=YYYY-MM-DD&to=YYYY-MM-DD で指定可\n`);
+    openInBrowser(URL);
+  });
+}
+
+// ---------- メイン ----------
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  if (args.help) {
+    console.log(fs.readFileSync(__filename, "utf8").split("*/")[0].replace(/\/\*\*?/, ""));
+    return;
+  }
+  if (args.serve) {
+    await startServer(args.port || 3000);
+  } else {
+    await generateStatic(args);
+  }
 }
 
 function openInBrowser(p) {
@@ -279,7 +347,7 @@ function rarityOf(it) {
   return { key: "N", label: "⚪ N", cls: "r-n" };
 }
 
-function renderHtml({ items, from, to, status, fmt }) {
+function renderHtml({ items, from, to, status, fmt, isServer = false }) {
   const rangeLabel = `${fmt(from)} 〜 ${fmt(to)}`;
   const jp = items.filter((x) => x.region === "jp");
   const gl = items.filter((x) => x.region === "global");
@@ -487,6 +555,49 @@ function renderHtml({ items, from, to, status, fmt }) {
     box-shadow:0 6px 16px -6px rgba(0,0,0,.15); }
   .theme-toggle:hover { transform:translateY(-2px); }
 
+  /* ===== 期間選択パネル ===== */
+  .period-panel {
+    max-width:1180px; margin:14px auto 0; padding:14px 20px;
+    background:var(--card); border:3px solid var(--line); border-radius:18px;
+    display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+    box-shadow:0 6px 18px -10px rgba(0,0,0,.1);
+  }
+  .period-panel .pp-label { font-weight:900; color:var(--ink); font-size:14px; }
+  .period-panel input[type=date] {
+    padding:9px 14px; border:2px solid var(--line); border-radius:99px; font-size:14px; font-weight:600;
+    background:#fff; color:var(--ink); font-family:inherit;
+  }
+  [data-theme="dark"] .period-panel input[type=date] { background:#2a2240; color:var(--ink); color-scheme: dark; }
+  .period-panel .pp-arrow { color:var(--sub); font-weight:700; }
+  .period-panel .pp-presets { display:flex; gap:6px; flex-wrap:wrap; }
+  .period-panel .pp-preset {
+    border:2px solid var(--line); background:#fff; color:var(--ink);
+    padding:7px 14px; border-radius:99px; cursor:pointer; font-size:13px; font-weight:800;
+    transition:transform .15s;
+  }
+  [data-theme="dark"] .period-panel .pp-preset { background:#2a2240; }
+  .period-panel .pp-preset:hover { transform:translateY(-2px); }
+  .period-panel .pp-submit {
+    border:none; background:linear-gradient(135deg,var(--hot),var(--violet)); color:#fff;
+    padding:10px 22px; border-radius:99px; cursor:pointer; font-size:14px; font-weight:900;
+    box-shadow:0 8px 18px -6px rgba(255,45,111,.5); transition:transform .15s;
+    margin-left:auto;
+  }
+  .period-panel .pp-submit:hover { transform:scale(1.05); }
+  .period-panel .pp-static-note {
+    color:var(--sub); font-size:12px; font-weight:600; margin-left:auto;
+    background:#fef9c3; padding:6px 14px; border-radius:99px; border:2px solid #fde68a;
+  }
+  [data-theme="dark"] .period-panel .pp-static-note { background:#3a3015; border-color:#5b4a1a; color:#fde68a; }
+  .period-panel.loading { opacity:.6; pointer-events:none; }
+  .period-panel.loading::after {
+    content:"取得中..."; color:var(--hot); font-weight:900; margin-left:8px;
+  }
+  @media (max-width:760px){
+    .period-panel { gap:8px; padding:12px 14px; }
+    .period-panel .pp-submit, .period-panel .pp-static-note { margin-left:0; }
+  }
+
   /* ===== プレイヤーステータスバー ===== */
   .playerbar { position:sticky; top:0; z-index:30; background:var(--card); border-bottom:3px solid var(--hot);
     box-shadow:0 4px 16px -8px rgba(0,0,0,.1); padding:10px 18px; }
@@ -610,52 +721,51 @@ function renderHtml({ items, from, to, status, fmt }) {
   .gacha-btn:active { transform:scale(.95); }
   .gacha-sub { font-size:12px; color:var(--sub); margin-top:8px; font-weight:600; }
 
-  /* ガチャモーダル */
-  .gacha-overlay { position:fixed; inset:0; background:rgba(15,10,30,.78);
-    display:none; place-items:center; z-index:50; animation: fadein .25s ease; }
-  .gacha-overlay.show { display:grid; }
-  @keyframes fadein { from{opacity:0} to{opacity:1} }
-  .gacha-box { background:var(--card); border-radius:28px; padding:36px 32px 32px; max-width:540px; width:92%;
-    text-align:center; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.5);
-    border:4px solid var(--line);
-    animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
-  .gacha-box .close { position:absolute; top:12px; right:14px; background:#fff; border:2px solid var(--line);
-    width:36px; height:36px; border-radius:50%; font-size:20px; line-height:1; cursor:pointer; color:var(--ink); font-weight:900; }
-  .gacha-get-label { display:inline-block; font-size:13px; font-weight:900; letter-spacing:.3em; color:#fff;
+  /* ガチャ結果（ボタン直下にインライン表示） */
+  .gacha-result {
+    max-width:640px; margin:18px auto 0; background:var(--card); border-radius:24px;
+    padding:28px 28px 26px; text-align:center; border:4px solid var(--line);
+    box-shadow:0 18px 40px -16px rgba(0,0,0,.2);
+    display:none; position:relative;
+  }
+  .gacha-result.show { display:block; animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
+  .gacha-result .close { position:absolute; top:10px; right:12px; background:#fff; border:2px solid var(--line);
+    width:34px; height:34px; border-radius:50%; font-size:18px; line-height:1; cursor:pointer; color:var(--ink); font-weight:900; }
+  .gacha-get-label { display:inline-block; font-size:12px; font-weight:900; letter-spacing:.3em; color:#fff;
     background:linear-gradient(135deg,var(--gold),var(--hot)); padding:5px 18px; border-radius:99px;
-    margin-bottom:14px; animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
+    margin-bottom:12px; animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
   .gacha-rarity-big {
-    font-size:96px; font-weight:900; margin:6px 0 10px; line-height:1; letter-spacing:.04em;
-    animation: rarityPop .8s cubic-bezier(.34,1.7,.4,1);
-    text-shadow: 0 6px 30px rgba(0,0,0,.2);
+    font-size:80px; font-weight:900; margin:4px 0 8px; line-height:1; letter-spacing:.04em;
+    animation: rarityPop .7s cubic-bezier(.34,1.7,.4,1);
+    text-shadow: 0 6px 20px rgba(0,0,0,.15);
   }
   @keyframes rarityPop {
     0% { transform: scale(.3) rotate(-30deg); opacity:0; }
-    60%{ transform: scale(1.25) rotate(8deg); opacity:1; }
+    60%{ transform: scale(1.22) rotate(8deg); opacity:1; }
     100%{ transform: scale(1) rotate(0); opacity:1; }
   }
-  .gacha-box h3 { font-size:22px; line-height:1.5; margin:14px 16px 8px; font-weight:900; color:var(--ink); }
-  .gacha-box .gacha-meta { color:var(--sub); font-size:13px; font-weight:700; margin:0 0 8px; }
-  .gacha-box .gacha-summary { color:var(--sub); margin:0 16px 20px; font-size:13px; line-height:1.65;
-    background:rgba(0,0,0,.03); border-radius:12px; padding:10px 14px; max-height:80px; overflow:hidden; }
-  [data-theme="dark"] .gacha-box .gacha-summary { background:rgba(255,255,255,.05); }
-  .gacha-box .open-link { display:inline-block; background:linear-gradient(135deg,var(--hot),var(--violet));
-    color:#fff; padding:14px 28px; border-radius:999px; font-weight:900; font-size:15px;
-    box-shadow:0 10px 24px -6px rgba(255,45,111,.5); transition: transform .15s; }
-  .gacha-box .open-link:hover { transform:scale(1.06); }
+  .gacha-result h3 { font-size:20px; line-height:1.5; margin:10px 16px 6px; font-weight:900; color:var(--ink); }
+  .gacha-result .gacha-meta { color:var(--sub); font-size:13px; font-weight:700; margin:0 0 8px; }
+  .gacha-result .gacha-summary { color:var(--sub); margin:6px 8px 18px; font-size:13px; line-height:1.65;
+    background:rgba(0,0,0,.04); border-radius:12px; padding:10px 14px; max-height:80px; overflow:hidden; text-align:left; }
+  [data-theme="dark"] .gacha-result .gacha-summary { background:rgba(255,255,255,.05); }
+  .gacha-result .open-link { display:inline-block; background:linear-gradient(135deg,var(--hot),var(--violet));
+    color:#fff; padding:12px 26px; border-radius:999px; font-weight:900; font-size:14px;
+    box-shadow:0 10px 22px -6px rgba(255,45,111,.5); transition: transform .15s; }
+  .gacha-result .open-link:hover { transform:scale(1.06); }
   /* レアリティごとの枠＋背景アクセント */
-  .gacha-box.r-ssr { border-color:var(--gold); background:
+  .gacha-result.r-ssr { border-color:var(--gold); background:
       radial-gradient(ellipse at top, rgba(251,191,36,.25), transparent 60%), var(--card); }
-  .gacha-box.r-ssr .gacha-rarity-big { color:#b45309; text-shadow: 0 0 30px rgba(251,191,36,.7), 0 6px 12px rgba(0,0,0,.15);
-    animation: rarityPop .8s cubic-bezier(.34,1.7,.4,1), shineSsr 1.6s ease-in-out infinite; }
+  .gacha-result.r-ssr .gacha-rarity-big { color:#b45309; text-shadow: 0 0 30px rgba(251,191,36,.7), 0 6px 12px rgba(0,0,0,.15);
+    animation: rarityPop .7s cubic-bezier(.34,1.7,.4,1), shineSsr 1.6s ease-in-out infinite; }
   @keyframes shineSsr { 0%,100%{ filter:brightness(1) } 50%{ filter:brightness(1.3) } }
-  .gacha-box.r-sr  { border-color:var(--violet); background:
+  .gacha-result.r-sr  { border-color:var(--violet); background:
       radial-gradient(ellipse at top, rgba(168,85,247,.18), transparent 60%), var(--card); }
-  .gacha-box.r-sr  .gacha-rarity-big { color:var(--violet); text-shadow: 0 0 22px rgba(168,85,247,.55); }
-  .gacha-box.r-r   { border-color:var(--azure); background:
+  .gacha-result.r-sr  .gacha-rarity-big { color:var(--violet); text-shadow: 0 0 22px rgba(168,85,247,.55); }
+  .gacha-result.r-r   { border-color:var(--azure); background:
       radial-gradient(ellipse at top, rgba(6,182,212,.16), transparent 60%), var(--card); }
-  .gacha-box.r-r   .gacha-rarity-big { color:var(--azure); }
-  .gacha-box.r-n   .gacha-rarity-big { color:#6b7280; }
+  .gacha-result.r-r   .gacha-rarity-big { color:var(--azure); }
+  .gacha-result.r-n   .gacha-rarity-big { color:#6b7280; }
   /* カードのrarityチップは従来通り */
   .r-ssr .rarity { background:linear-gradient(135deg,#fff5b1,#ffd84a); color:#7c4a02; }
   .r-sr  .rarity { background:linear-gradient(135deg,#e9d5ff,#a855f7); color:#fff; }
@@ -774,6 +884,23 @@ function renderHtml({ items, from, to, status, fmt }) {
   <div class="tagline"><span>🇯🇵 日本</span><span>×</span><span>🌐 世界</span><span>×</span><span>🤖 教育テクノロジー、全部楽しもう！</span></div>
 </header>
 
+<!-- 期間選択パネル -->
+<form class="period-panel" id="periodPanel" method="get" action="/">
+  <span class="pp-label">📅 期間</span>
+  <input type="date" name="from" id="ppFrom" value="${esc(fmt(from))}">
+  <span class="pp-arrow">〜</span>
+  <input type="date" name="to" id="ppTo" value="${esc(fmt(to))}">
+  <div class="pp-presets">
+    <button type="button" class="pp-preset" data-days="3">3日</button>
+    <button type="button" class="pp-preset" data-days="7">1週間</button>
+    <button type="button" class="pp-preset" data-days="14">2週間</button>
+    <button type="button" class="pp-preset" data-days="30">1ヶ月</button>
+  </div>
+  ${isServer
+    ? `<button type="submit" class="pp-submit">🔄 最新を取得</button>`
+    : `<span class="pp-static-note">📌 期間変更は <code>node fetch-news.js --serve</code> で起動してください</span>`}
+</form>
+
 <!-- プレイヤーステータスバー（読了で経験値が貯まる！） -->
 <div class="playerbar">
   <div class="pb-inner">
@@ -805,6 +932,16 @@ function renderHtml({ items, from, to, status, fmt }) {
     <button class="gacha-btn" id="gacha" type="button">🎰 ニュースガチャ！</button>
     <div class="gacha-sub">レア度: ⚪N → 🔵R → 💎SR → ✨SSR ／ ガチャ回数: <b id="gachaCount">0</b></div>
   </div>
+  <!-- ガチャ結果（インライン） -->
+  <div class="gacha-result" id="gachaResult">
+    <button class="close" id="gachaClose" type="button">×</button>
+    <div class="gacha-get-label">🎉 GET!</div>
+    <div class="gacha-rarity-big" id="gachaRarity">✨ SSR</div>
+    <h3 id="gachaTitle"></h3>
+    <div class="gacha-meta" id="gachaMeta"></div>
+    <div class="gacha-summary" id="gachaSummary"></div>
+    <a class="open-link" id="gachaLink" target="_blank" rel="noopener">この記事を読む →</a>
+  </div>
 
   <div class="toolbar">
     <div class="tabs">
@@ -828,18 +965,6 @@ function renderHtml({ items, from, to, status, fmt }) {
 </div>
 <footer>📰 EdTech FUN! WEEKLY — 読了でXP・バッジ獲得・ビンゴでお祝い ／ 進捗はブラウザに保存されます</footer>
 
-<!-- ガチャモーダル -->
-<div class="gacha-overlay" id="gachaOverlay">
-  <div class="gacha-box" id="gachaBox">
-    <button class="close" id="gachaClose" type="button">×</button>
-    <div class="gacha-get-label">🎉 GET!</div>
-    <div class="gacha-rarity-big" id="gachaRarity">✨ SSR</div>
-    <h3 id="gachaTitle"></h3>
-    <div class="gacha-meta" id="gachaMeta"></div>
-    <div class="gacha-summary" id="gachaSummary"></div>
-    <a class="open-link" id="gachaLink" target="_blank" rel="noopener">この記事を読む →</a>
-  </div>
-</div>
 
 <script>
   // ===== 永続化（プレイヤー進捗） =====
@@ -859,6 +984,29 @@ function renderHtml({ items, from, to, status, fmt }) {
       read:[...store.read], fav:[...store.fav], badges:[...store.badges],
       bingo:[...store.bingo], gachaCount:store.gachaCount, xp:store.xp, dailyDate:store.dailyDate,
     }));
+  }
+
+  // ===== 期間選択 =====
+  const periodPanel = document.getElementById('periodPanel');
+  const ppFrom = document.getElementById('ppFrom');
+  const ppTo = document.getElementById('ppTo');
+  const isServerMode = ${isServer ? 'true' : 'false'};
+  function fmtIso(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  document.querySelectorAll('.pp-preset').forEach(b => b.addEventListener('click', () => {
+    const days = parseInt(b.dataset.days, 10);
+    const to = new Date(); to.setHours(0,0,0,0);
+    const from = new Date(to.getTime() - (days-1) * 86400000);
+    ppFrom.value = fmtIso(from);
+    ppTo.value = fmtIso(to);
+    if (isServerMode) periodPanel.requestSubmit();
+  }));
+  if (isServerMode) {
+    periodPanel.addEventListener('submit', () => { periodPanel.classList.add('loading'); });
+  } else {
+    // 静的版：送信ブロックして注意表示
+    periodPanel.addEventListener('submit', e => { e.preventDefault(); alert('期間変更は --serve モードでのみ可能です。\\nターミナルで: node fetch-news.js --serve'); });
   }
 
   // ===== テーマ =====
@@ -1080,12 +1228,10 @@ function renderHtml({ items, from, to, status, fmt }) {
     });
   });
 
-  // ===== ガチャ（モーダル＋紙吹雪） =====
-  const overlay = document.getElementById('gachaOverlay');
+  // ===== ガチャ（インライン結果カード） =====
+  const result = document.getElementById('gachaResult');
   const closeBtn = document.getElementById('gachaClose');
-  function closeGacha() { overlay.classList.remove('show'); }
-  closeBtn.addEventListener('click', closeGacha);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeGacha(); });
+  closeBtn.addEventListener('click', () => result.classList.remove('show'));
 
   document.getElementById('gacha').addEventListener('click', () => {
     const visible = cards.filter(c => c.style.display !== 'none');
@@ -1096,8 +1242,10 @@ function renderHtml({ items, from, to, status, fmt }) {
 
     const rar = pick.dataset.rarity;
     const rarMap = { SSR:'✨ SSR', SR:'💎 SR', R:'🔵 R', N:'⚪ N' };
-    const box = document.getElementById('gachaBox');
-    box.classList.remove('r-ssr','r-sr','r-r','r-n'); box.classList.add('r-' + rar.toLowerCase());
+    result.classList.remove('r-ssr','r-sr','r-r','r-n','show');
+    // forced reflow to restart animation
+    void result.offsetWidth;
+    result.classList.add('r-' + rar.toLowerCase(), 'show');
     document.getElementById('gachaRarity').textContent = rarMap[rar];
     document.getElementById('gachaTitle').textContent = pick.dataset.title;
     const flag = pick.dataset.region === 'jp' ? '🇯🇵' : '🌐';
@@ -1108,10 +1256,13 @@ function renderHtml({ items, from, to, status, fmt }) {
       sumEl.textContent = summary.textContent; sumEl.style.display = '';
     } else { sumEl.style.display = 'none'; }
     document.getElementById('gachaLink').href = pick.dataset.link;
-    overlay.classList.add('show');
+
     if (rar === 'SSR') { confetti(); award('ssr'); }
     if (rar === 'SR')  confetti();
     checkBadges();
+
+    // 結果カードをビューにスクロール
+    result.scrollIntoView({ behavior:'smooth', block:'center' });
 
     document.querySelectorAll('.card.flash').forEach(c => c.classList.remove('flash'));
     pick.classList.add('flash');

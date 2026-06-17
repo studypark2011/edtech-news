@@ -18,12 +18,20 @@
 
 ### コマンドライン
 ```sh
-node fetch-news.js                       # 直近7日間（デフォルト）
+node fetch-news.js                       # 直近7日間の静的HTMLを生成（デフォルト）
 node fetch-news.js --days 14             # 直近14日間
 node fetch-news.js --from 2026-06-01 --to 2026-06-17   # 期間を指定
 node fetch-news.js --from 2026-06-01     # 指定日から今日まで
 node fetch-news.js --no-open             # ブラウザを自動で開かない
 ```
+
+### 🚀 サーバーモード（ブラウザから期間を切り替えて最新取得）
+```sh
+node fetch-news.js --serve               # http://localhost:3000 で起動
+node fetch-news.js --serve --port 8080   # ポート変更
+```
+ブラウザの**期間選択パネル**から日付や「1週間／2週間／1ヶ月」プリセットを選ぶと、
+その場でサーバーがRSSを再取得して結果を返します（同じ範囲は5分間メモリキャッシュ）。
 
 ## 機能
 - 🇯🇵 日本 / 🌐 海外 をタブで切り替え
