@@ -1,0 +1,8 @@
+# 生成された期間別レポート（履歴）はコミットしない
+reports/
+
+# 依存・OS・エディタ
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
