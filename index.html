@@ -1,46 +1,300 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EdTechニュース一覧 2026-06-11 〜 2026-06-17</title>
+<title>EdTech WEEKLY 2026-06-11 〜 2026-06-17</title>
 <style>
-  :root { --bg:#f6f7f9; --card:#fff; --ink:#1f2430; --sub:#6b7280; --line:#e5e7eb; --accent:#2563eb; --jp:#dc2626; }
+  :root {
+    --bg:#f7f6f2; --card:#fff; --ink:#11131a; --sub:#5b6172; --line:#e5e3dc;
+    --accent:#ff2d55; --accent2:#ffb800; --link:#1d4ed8;
+    --hero-bg:linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#dc2626 100%);
+  }
+  [data-theme="dark"] {
+    --bg:#0b0d12; --card:#161922; --ink:#f4f4f5; --sub:#a1a1aa; --line:#2a2e3a;
+    --accent:#ff3366; --accent2:#fbbf24; --link:#93c5fd;
+    --hero-bg:linear-gradient(135deg,#1e1b4b 0%,#7c3aed 50%,#ec4899 100%);
+  }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif; line-height:1.6; }
-  header { background:linear-gradient(135deg,#1e3a8a,#2563eb); color:#fff; padding:28px 24px; }
-  header h1 { margin:0 0 4px; font-size:22px; }
-  header .meta { opacity:.9; font-size:14px; }
-  .wrap { max-width:1080px; margin:0 auto; padding:20px 24px 60px; }
-  .toolbar { position:sticky; top:0; background:var(--bg); padding:14px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center; border-bottom:1px solid var(--line); z-index:5; }
-  .toolbar input, .toolbar select { padding:8px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px; background:#fff; }
+  html, body { margin:0; padding:0; }
+  body {
+    background:var(--bg); color:var(--ink);
+    font-family:"Inter",-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  a { color:inherit; text-decoration:none; }
+
+  /* ===== ヘッダー（雑誌風） ===== */
+  .masthead { background:var(--hero-bg); color:#fff; padding:36px 28px 28px; position:relative; overflow:hidden; }
+  .masthead::before {
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(circle at 80% 20%, rgba(255,255,255,.15), transparent 50%);
+  }
+  .mast-inner { max-width:1180px; margin:0 auto; position:relative; }
+  .brand { display:flex; align-items:baseline; gap:14px; font-weight:900; letter-spacing:.04em; font-size:38px; line-height:1; }
+  .brand .accent { color:var(--accent2); }
+  .brand .vol { font-size:13px; font-weight:600; opacity:.85; letter-spacing:.2em; }
+  .tagline { margin-top:10px; font-size:14px; opacity:.85; }
+  .badges { margin-top:18px; display:flex; flex-wrap:wrap; gap:8px; }
+  .badge { background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.25);
+           padding:6px 14px; border-radius:999px; font-size:13px; font-weight:600; backdrop-filter: blur(4px); }
+  .badge b { color:var(--accent2); }
+  .theme-toggle { position:absolute; top:18px; right:24px; background:rgba(0,0,0,.25); color:#fff;
+    border:1px solid rgba(255,255,255,.3); border-radius:999px; padding:8px 14px; cursor:pointer; font-size:13px; }
+
+  .wrap { max-width:1180px; margin:0 auto; padding:28px 24px 60px; }
+
+  /* ===== ヒーロー ===== */
+  .hero-label { font-size:11px; font-weight:900; letter-spacing:.25em; color:var(--accent); margin-bottom:10px; }
+  .hero-card {
+    display:block; background:var(--card); border-radius:18px; padding:32px;
+    box-shadow:0 18px 50px -20px rgba(0,0,0,.25); border:1px solid var(--line);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .hero-card:hover { transform:translateY(-4px); box-shadow:0 30px 60px -20px rgba(0,0,0,.35); }
+  .hero-card h2 { font-size:28px; line-height:1.35; margin:14px 0 12px; font-weight:800; letter-spacing:-.01em; }
+  .hero-card p { color:var(--sub); margin:0 0 14px; font-size:14.5px; }
+  .hero-card .meta-row { display:flex; justify-content:space-between; color:var(--sub); font-size:13px; }
+  .sub-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+  @media (max-width:760px){ .sub-grid { grid-template-columns:1fr; } .hero-card h2 { font-size:22px; } }
+
+  /* ===== パネル（バズワード/ランキング）===== */
+  .panels { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:28px 0 8px; }
+  @media (max-width:820px){ .panels { grid-template-columns:1fr; } }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px 22px; }
+  .panel-title { margin:0 0 14px; font-size:14px; font-weight:800; letter-spacing:.05em; }
+  ol.buzz, ol.srcrank { list-style:none; padding:0; margin:0; }
+  ol.buzz li, ol.srcrank li {
+    display:grid; grid-template-columns:28px 1fr 80px 30px; gap:10px; align-items:center;
+    padding:6px 0; font-size:13.5px;
+  }
+  .rank { color:var(--sub); font-variant-numeric:tabular-nums; font-weight:700; font-size:12px; text-align:center; }
+  .buzz-word { background:transparent; border:none; color:var(--ink); font-weight:700; text-align:left; cursor:pointer; padding:0; font-size:14px; }
+  .buzz-word:hover { color:var(--accent); }
+  .srcrank .name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bar { background:var(--line); height:8px; border-radius:99px; overflow:hidden; }
+  .bar > span { display:block; height:100%; background:linear-gradient(90deg,var(--accent2),var(--accent)); border-radius:99px; }
+  .cnt { color:var(--sub); font-variant-numeric:tabular-nums; text-align:right; font-size:13px; }
+
+  /* ===== ガチャボタン ===== */
+  .gacha-row { text-align:center; margin:28px 0 8px; }
+  .gacha-btn {
+    background:linear-gradient(135deg,var(--accent2),var(--accent));
+    color:#fff; border:none; padding:14px 28px; border-radius:999px;
+    font-size:16px; font-weight:800; cursor:pointer; box-shadow:0 10px 24px -8px rgba(255,45,85,.5);
+    transition:transform .15s ease;
+  }
+  .gacha-btn:hover { transform:scale(1.05); }
+  .gacha-btn:active { transform:scale(.97); }
+
+  /* ===== ツールバー ===== */
+  .toolbar {
+    position:sticky; top:0; background:var(--bg); padding:14px 0; z-index:5;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; border-bottom:1px solid var(--line);
+  }
+  .toolbar input, .toolbar select {
+    padding:9px 14px; border:1px solid var(--line); border-radius:999px; font-size:14px;
+    background:var(--card); color:var(--ink);
+  }
   .toolbar input[type=search]{ flex:1; min-width:200px; }
-  .tabs button { border:1px solid var(--line); background:#fff; padding:8px 14px; border-radius:999px; cursor:pointer; font-size:14px; margin-right:6px; }
-  .tabs button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
-  .count { color:var(--sub); font-size:13px; margin:14px 0 6px; }
-  table { width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.06); }
-  td { padding:14px 16px; border-bottom:1px solid var(--line); vertical-align:top; }
-  tr:last-child td { border-bottom:none; }
-  td.date { white-space:nowrap; color:var(--sub); font-size:13px; width:96px; font-variant-numeric:tabular-nums; }
-  td.src { white-space:nowrap; font-size:13px; color:var(--sub); width:150px; }
-  td.title a { color:var(--ink); text-decoration:none; font-weight:600; font-size:15.5px; }
-  td.title a:hover { color:var(--accent); text-decoration:underline; }
-  .summary { color:var(--sub); font-size:13px; margin-top:4px; }
-  .empty { padding:40px; text-align:center; color:var(--sub); }
-  details { margin-top:30px; background:var(--card); border-radius:12px; padding:8px 18px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
-  details summary { cursor:pointer; font-weight:600; padding:10px 0; }
-  details ul { list-style:none; padding:0; margin:0 0 10px; font-size:13px; }
+  .tabs button {
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    padding:9px 16px; border-radius:999px; cursor:pointer; font-size:14px; margin-right:6px; font-weight:600;
+  }
+  .tabs button.active { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  .count { color:var(--sub); font-size:13px; margin:18px 0 8px; font-weight:600; }
+
+  /* ===== カード一覧 ===== */
+  .cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:16px; }
+  .card {
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px;
+    display:flex; flex-direction:column; transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .card:hover { transform:translateY(-3px); box-shadow:0 12px 28px -12px rgba(0,0,0,.2); border-color:var(--accent); }
+  .card h3 { font-size:15.5px; line-height:1.5; margin:8px 0 8px; font-weight:700; }
+  .card .summary { color:var(--sub); font-size:13px; margin:0 0 12px; flex:1; }
+  .card .meta-row { display:flex; justify-content:space-between; color:var(--sub); font-size:12px; margin-top:auto; }
+  .card.flash { animation: flash 1.2s ease; box-shadow:0 0 0 4px var(--accent2); }
+  @keyframes flash { 0%{transform:scale(.96)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+
+  /* ===== タグ ===== */
+  .tags { display:flex; flex-wrap:wrap; gap:5px; }
+  .tag { font-size:11px; font-weight:700; padding:3px 9px; border-radius:99px; letter-spacing:.02em; }
+  .t-ai    { background:#fee2e2; color:#b91c1c; }
+  .t-prog  { background:#dbeafe; color:#1e40af; }
+  .t-soc   { background:#fef3c7; color:#92400e; }
+  .t-univ  { background:#e0e7ff; color:#3730a3; }
+  .t-k12   { background:#dcfce7; color:#166534; }
+  .t-home  { background:#fce7f3; color:#9d174d; }
+  .t-money { background:#fef9c3; color:#854d0e; }
+  .t-data  { background:#cffafe; color:#155e75; }
+  .t-ev    { background:#ede9fe; color:#5b21b6; }
+  .t-teach { background:#ffedd5; color:#9a3412; }
+  [data-theme="dark"] .tag { filter: brightness(.85) saturate(1.3); }
+
+  .empty { padding:60px; text-align:center; color:var(--sub); background:var(--card); border-radius:14px; }
+  details { margin-top:32px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:8px 20px; }
+  details summary { cursor:pointer; font-weight:700; padding:12px 0; font-size:14px; }
+  details ul { list-style:none; padding:0; margin:0 0 12px; font-size:13px; }
   details li { padding:5px 0; border-bottom:1px solid var(--line); }
   .ok { color:#16a34a; } .ng { color:#dc2626; } .err { color:#b91c1c; }
-  footer { text-align:center; color:var(--sub); font-size:12px; padding:30px; }
+  footer { text-align:center; color:var(--sub); font-size:12px; padding:36px 20px; }
 </style>
 </head>
 <body>
-<header>
-  <h1>📰 EdTechニュース一覧</h1>
-  <div class="meta">期間: 2026-06-11 〜 2026-06-17 ／ 日本 120件・海外 15件・合計 135件 ／ 生成: 2026/6/17 12:45:39</div>
+<header class="masthead">
+  <button class="theme-toggle" id="themeToggle" type="button">🌙 Dark</button>
+  <div class="mast-inner">
+    <div class="brand">EdTech<span class="accent">WEEKLY</span> <span class="vol">VOL. 2026-06-11 〜 2026-06-17</span></div>
+    <div class="tagline">今週の教育テクノロジー、ぜんぶ載せ。日本と世界のEdTechを横断スクープ。</div>
+    <div class="badges">
+      <span class="badge">合計 <b>135</b> 本</span>
+      <span class="badge">🇯🇵 日本 <b>120</b></span>
+      <span class="badge">🌐 海外 <b>15</b></span>
+      <span class="badge">📡 9/9 ソース</span>
+    </div>
+  </div>
 </header>
+
 <div class="wrap">
+  
+    <section class="hero">
+      <div class="hero-label">🔥 THIS WEEK'S TOP STORY</div>
+      <a class="hero-card" href="https://resemom.jp/article/2026/06/17/86436.html" target="_blank" rel="noopener">
+        <div class="tags"><span class="tag t-k12">K-12</span></div>
+        <h2>【高校受験2027】埼玉県公立高の募集人員、全日制1,600人減</h2>
+        
+        <div class="meta-row"><span>🇯🇵 リセマム</span><span>2026-06-17</span></div>
+      </a>
+      <div class="sub-grid"><a class="card" href="https://reseed.resemom.jp/article/2026/06/17/13481.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】石川県の志願状況…倍率2.5倍、大3選考は16人増の230人 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】石川県の志願状況…倍率2.5倍、大3選考は16人増の230人</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://www.eschoolnews.com/innovative-teaching/2026/06/16/with-students-tuning-out-its-time-to-rethink-the-classroom/" target="_blank" rel="noopener"
+       data-region="global" data-source="eSchool News"
+       data-text="with students tuning out, it’s time to rethink the classroom across classrooms right now, many educators are noticing the same shift: students are even harder to reach than they were just a short time ago. in a recent survey, teachers pointed to rising disengagement as a growing c…">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>With students tuning out, it’s time to rethink the classroom</h3>
+      <p class="summary">Across classrooms right now, many educators are noticing the same shift: Students are even harder to reach than they were just a short time ago. In a recent survey, teachers pointed to rising disengagement as a growing c…</p>
+      <div class="meta-row"><span class="src">🌐 eSchool News</span><span class="date">2026-06-16</span></div>
+    </a></div>
+    </section>
+
+  <div class="panels">
+    
+    <section class="panel buzz-panel">
+      <h3 class="panel-title">📈 今週のバズワード TOP12</h3>
+      <ol class="buzz">
+        <li><span class="rank">1</span>
+          <button class="buzz-word" data-q="夏休">夏休</button>
+          <span class="bar"><span style="width:100%"></span></span>
+          <span class="cnt">23</span>
+        </li>
+        <li><span class="rank">2</span>
+          <button class="buzz-word" data-q="教員採用">教員採用</button>
+          <span class="bar"><span style="width:47.82608695652174%"></span></span>
+          <span class="cnt">11</span>
+        </li>
+        <li><span class="rank">3</span>
+          <button class="buzz-word" data-q="対象">対象</button>
+          <span class="bar"><span style="width:47.82608695652174%"></span></span>
+          <span class="cnt">11</span>
+        </li>
+        <li><span class="rank">4</span>
+          <button class="buzz-word" data-q="無料">無料</button>
+          <span class="bar"><span style="width:43.47826086956522%"></span></span>
+          <span class="cnt">10</span>
+        </li>
+        <li><span class="rank">5</span>
+          <button class="buzz-word" data-q="プログラム">プログラム</button>
+          <span class="bar"><span style="width:34.78260869565217%"></span></span>
+          <span class="cnt">8</span>
+        </li>
+        <li><span class="rank">6</span>
+          <button class="buzz-word" data-q="倍率">倍率</button>
+          <span class="bar"><span style="width:30.434782608695656%"></span></span>
+          <span class="cnt">7</span>
+        </li>
+        <li><span class="rank">7</span>
+          <button class="buzz-word" data-q="セミナー">セミナー</button>
+          <span class="bar"><span style="width:30.434782608695656%"></span></span>
+          <span class="cnt">7</span>
+        </li>
+        <li><span class="rank">8</span>
+          <button class="buzz-word" data-q="日開催">日開催</button>
+          <span class="bar"><span style="width:30.434782608695656%"></span></span>
+          <span class="cnt">7</span>
+        </li>
+        <li><span class="rank">9</span>
+          <button class="buzz-word" data-q="生成">生成</button>
+          <span class="bar"><span style="width:21.73913043478261%"></span></span>
+          <span class="cnt">5</span>
+        </li>
+        <li><span class="rank">10</span>
+          <button class="buzz-word" data-q="プログラミング">プログラミング</button>
+          <span class="bar"><span style="width:21.73913043478261%"></span></span>
+          <span class="cnt">5</span>
+        </li>
+        <li><span class="rank">11</span>
+          <button class="buzz-word" data-q="レポート">レポート</button>
+          <span class="bar"><span style="width:21.73913043478261%"></span></span>
+          <span class="cnt">5</span>
+        </li>
+        <li><span class="rank">12</span>
+          <button class="buzz-word" data-q="日間">日間</button>
+          <span class="bar"><span style="width:21.73913043478261%"></span></span>
+          <span class="cnt">5</span>
+        </li></ol>
+    </section>
+    
+    <section class="panel">
+      <h3 class="panel-title">📊 メディア活性度ランキング</h3>
+      <ol class="srcrank">
+        <li><span class="rank">1</span>
+          <span class="name">🇯🇵 リセマム</span>
+          <span class="bar"><span style="width:100%"></span></span>
+          <span class="cnt">50</span>
+        </li>
+        <li><span class="rank">2</span>
+          <span class="name">🇯🇵 リシード(ReseEd)</span>
+          <span class="bar"><span style="width:100%"></span></span>
+          <span class="cnt">50</span>
+        </li>
+        <li><span class="rank">3</span>
+          <span class="name">🇯🇵 ICT教育ニュース</span>
+          <span class="bar"><span style="width:40%"></span></span>
+          <span class="cnt">20</span>
+        </li>
+        <li><span class="rank">4</span>
+          <span class="name">🌐 eSchool News</span>
+          <span class="bar"><span style="width:8%"></span></span>
+          <span class="cnt">4</span>
+        </li>
+        <li><span class="rank">5</span>
+          <span class="name">🌐 Tech &amp; Learning</span>
+          <span class="bar"><span style="width:8%"></span></span>
+          <span class="cnt">4</span>
+        </li>
+        <li><span class="rank">6</span>
+          <span class="name">🌐 EdTech Magazine</span>
+          <span class="bar"><span style="width:8%"></span></span>
+          <span class="cnt">4</span>
+        </li>
+        <li><span class="rank">7</span>
+          <span class="name">🌐 EdSurge</span>
+          <span class="bar"><span style="width:6%"></span></span>
+          <span class="cnt">3</span>
+        </li></ol>
+    </section>
+  </div>
+
+  <div class="gacha-row">
+    <button class="gacha-btn" id="gacha" type="button">🎰 ニュースガチャを引く</button>
+  </div>
+
   <div class="toolbar">
     <div class="tabs">
       <button data-f="all" class="active">すべて (135)</button>
@@ -48,716 +302,1024 @@
       <button data-f="global">🌐 海外 (15)</button>
     </div>
     <select id="srcFilter"><option value="">全ソース</option><option value="EdSurge">EdSurge</option><option value="EdTech Magazine">EdTech Magazine</option><option value="ICT教育ニュース">ICT教育ニュース</option><option value="Tech &amp; Learning">Tech &amp; Learning</option><option value="eSchool News">eSchool News</option><option value="リシード(ReseEd)">リシード(ReseEd)</option><option value="リセマム">リセマム</option></select>
-    <input type="search" id="search" placeholder="キーワードで絞り込み（例: 生成AI, university, ChatGPT）">
+    <input type="search" id="search" placeholder="🔍 キーワードで絞り込み（例: 生成AI, ChatGPT, university）">
   </div>
   <div class="count" id="count"></div>
-  <table><tbody id="list"><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】石川県の志願状況…倍率2.5倍、大3選考は16人増の230人 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/17/13481.html" target="_blank" rel="noopener">【教員採用】石川県の志願状況…倍率2.5倍、大3選考は16人増の230人</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【edix2026】copilot+ pcで教育の未来を体感する ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/17/13480.html" target="_blank" rel="noopener">【EDIX2026】Copilot+ PCで教育の未来を体感する</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】デジタル庁の仕事体験「こども霞が関見学デー」7/29-30 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/17/86435.html" target="_blank" rel="noopener">【夏休み2026】デジタル庁の仕事体験「こども霞が関見学デー」7/29-30</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="小学校で旧石器時代扱わず「中高で取り扱う」文科相6/16会見 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/17/13479.html" target="_blank" rel="noopener">小学校で旧石器時代扱わず「中高で取り扱う」文科相6/16会見</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】野球殿堂博物館、小学生「野球で自由研究」 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/17/86434.html" target="_blank" rel="noopener">【夏休み2026】野球殿堂博物館、小学生「野球で自由研究」</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="生成aiで社会課題を解決「都立学校ai lab」アプリ開発ワークショップ…中高生募集 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/17/86433.html" target="_blank" rel="noopener">生成AIで社会課題を解決「都立学校AI Lab」アプリ開発ワークショップ…中高生募集</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="生成ai活用と学校情報セキュリティを学ぶセミナー7/18 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/17/13478.html" target="_blank" rel="noopener">生成AI活用と学校情報セキュリティを学ぶセミナー7/18</a>
-        </td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="ユーバー、「プログラミング講師育成講座・入門編（動画・自学版）」を完全無料化 ユーバーは6月16日、同社が提供するプログラミング講師育成プログラムにおいて、「プログラミング講師講座・入門編（動画・自学版）」を完全無料化することを発表した。 同講座は、子ども向 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17yuber-4/" target="_blank" rel="noopener">ユーバー、「プログラミング講師育成講座・入門編（動画・自学版）」を完全無料化</a>
-        <div class="summary">ユーバーは6月16日、同社が提供するプログラミング講師育成プログラムにおいて、「プログラミング講師講座・入門編（動画・自学版）」を完全無料化することを発表した。 同講座は、子ども向 […]</div></td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【大学受験2026】岡山大 高校別合格数、17位まで公立独占 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/17/86432.html" target="_blank" rel="noopener">【大学受験2026】岡山大 高校別合格数、17位まで公立独占</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="coiu、全国8校と高大連携協定を締結…探究支援プログラムや奨学金付入試制度 ">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/17/13477.html" target="_blank" rel="noopener">CoIU、全国8校と高大連携協定を締結…探究支援プログラムや奨学金付入試制度</a>
-        </td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="群馬・太田市、小中高生向けクリエイティブ体験講座「tsukurun trial in太田市」開催 群馬県太田市は、6月から2027年3月にかけて、小中高生を対象にしたデジタルクリエイティブ体験講座「tsukurun trial in太田市」を無料開催する。 同講座は、群馬県が運 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17city-ota/" target="_blank" rel="noopener">群馬・太田市、小中高生向けクリエイティブ体験講座「tsukurun trial in太田市」開催</a>
-        <div class="summary">群馬県太田市は、6月から2027年3月にかけて、小中高生を対象にしたデジタルクリエイティブ体験講座「tsukurun trial in太田市」を無料開催する。 同講座は、群馬県が運 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="compass、小中校向けデジタルテスト「キュビナ テスト」が福岡市の「学習定着度調査」に採用 compassは16日、同社の小中学校向けデジタルテスト（cbt）サービス「キュビナ テスト」が、福岡県福岡市が独自に実施する「学習定着度調査」で採用されることになったと発表した。 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17qubena-6/" target="_blank" rel="noopener">COMPASS、小中校向けデジタルテスト「キュビナ テスト」が福岡市の「学習定着度調査」に採用</a>
-        <div class="summary">COMPASSは16日、同社の小中学校向けデジタルテスト（CBT）サービス「キュビナ テスト」が、福岡県福岡市が独自に実施する「学習定着度調査」で採用されることになったと発表した。 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="replayce、名古屋市から中高生向け実践型教育プログラム「nagoya ai youth camp」の企画・運営業務を受託 replayceは16日、名古屋市から「nagoya ai youth camp」の企画・運営業務を受託したと発表した。 初心者からすべての中高生を対象とした実践型教育プログラムを […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17replayce/" target="_blank" rel="noopener">RePlayce、名古屋市から中高生向け実践型教育プログラム「NAGOYA AI YOUTH CAMP」の企画・運営業務を受託</a>
-        <div class="summary">RePlayceは16日、名古屋市から「NAGOYA AI YOUTH CAMP」の企画・運営業務を受託したと発表した。 初心者からすべての中高生を対象とした実践型教育プログラムを […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="裁量的な時間を「教職員の授業準備の時間に充てる」教職員が8割以上 =school voice project調べ= school voice projectは16日、文部科学省の特別部会で提案されている「裁量的な時間」の活用に関して教職員にアンケートした結果を公表した。 調査は、小中高校年齢の児 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17school-voice-pj/" target="_blank" rel="noopener">裁量的な時間を「教職員の授業準備の時間に充てる」教職員が8割以上 =School Voice Project調べ=</a>
-        <div class="summary">School Voice Projectは16日、文部科学省の特別部会で提案されている「裁量的な時間」の活用に関して教職員にアンケートした結果を公表した。 調査は、小中高校年齢の児 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="fullfact、独自分析レポート「職場ai利用率から見る現場定着レポート 2026」公開 fullfactは15日、国内外の公的統計や国際機関のレポートを再分析した「職場ai利用率から見る現場定着レポート2026」を公開した。 同レポートは、aiの個人利用と職場での業務 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17fullfact/" target="_blank" rel="noopener">FULLFACT、独自分析レポート「職場AI利用率から見る現場定着レポート 2026」公開</a>
-        <div class="summary">FULLFACTは15日、国内外の公的統計や国際機関のレポートを再分析した「職場AI利用率から見る現場定着レポート2026」を公開した。 同レポートは、AIの個人利用と職場での業務 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="名城大学、高齢者がaiを安心して活用できる社会へ aiリテラシー教育モデルの開発に着手 名城大学と国立長寿医療研究センターは15日、長寿科学振興財団が実施する「公益財団法人長寿科学振興財団高齢社会課題解決研究（ai）への助成」にて、課題1「高齢者向けaiリテラシーの向 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17meijo-u/" target="_blank" rel="noopener">名城大学、高齢者がAIを安心して活用できる社会へ AIリテラシー教育モデルの開発に着手</a>
-        <div class="summary">名城大学と国立長寿医療研究センターは15日、長寿科学振興財団が実施する「公益財団法人長寿科学振興財団高齢社会課題解決研究（AI）への助成」にて、課題1「高齢者向けAIリテラシーの向 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="クラーク記念国際高等学校、警視庁と連携し「高校生のためのsns・闇バイト防犯教室」を実施 クラーク記念国際高等学校およびクラークnext高等学校は、警視庁の協力のもと、両校の在籍生徒約1万1000名を対象とした「高校生のためのsns・トクリュウ（闇バイト）についての非行 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17clark-2/" target="_blank" rel="noopener">クラーク記念国際高等学校、警視庁と連携し「高校生のためのSNS・闇バイト防犯教室」を実施</a>
-        <div class="summary">クラーク記念国際高等学校およびクラークNEXT高等学校は、警視庁の協力のもと、両校の在籍生徒約1万1000名を対象とした「高校生のためのSNS・トクリュウ（闇バイト）についての非行 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="マイクロファン、教育用マイコン「trygear」用カラーledモジュールと多機能センサーモジュールを発売 ピープルメディア マイクロファン事業部は15日、教育現場での長年の知見を凝縮した新世代教育用マイコン基板シリーズ「trygear（トライギア）」を始動し、その周辺モジュールとして、 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17peoplemedia/" target="_blank" rel="noopener">マイクロファン、教育用マイコン「TRYGEAR」用カラーLEDモジュールと多機能センサーモジュールを発売</a>
-        <div class="summary">ピープルメディア マイクロファン事業部は15日、教育現場での長年の知見を凝縮した新世代教育用マイコン基板シリーズ「TRYGEAR（トライギア）」を始動し、その周辺モジュールとして、 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="すららネット、教委職員・学校教職員対象「ai時代の学習プロセス評価の在り方」23日開催 すららネットは、教育委員会職員と学校教職員を対象としたオンラインセミナー「ai時代の学習プロセス評価の在り方」を6月23日に開催する。 gigaスクール構想による1人1台端末の普及 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17surala-24/" target="_blank" rel="noopener">すららネット、教委職員・学校教職員対象「AI時代の学習プロセス評価の在り方」23日開催</a>
-        <div class="summary">すららネットは、教育委員会職員と学校教職員を対象としたオンラインセミナー「AI時代の学習プロセス評価の在り方」を6月23日に開催する。 GIGAスクール構想による1人1台端末の普及 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="ライフイズテック、アイデア×実装でイノベーターを輩出する中高生対象「テック甲子園」応募受付を開始 ライフイズテックは丸井グループと共同で、中高生を対象としたテクノロジーコンテスト「テック甲子園」を12月6日に開催する。それに伴い、16日からプロダクト（アプリ／webサービス／ゲ […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17life-is-tech-5/" target="_blank" rel="noopener">ライフイズテック、アイデア×実装でイノベーターを輩出する中高生対象「テック甲子園」応募受付を開始</a>
-        <div class="summary">ライフイズテックは丸井グループと共同で、中高生を対象としたテクノロジーコンテスト「テック甲子園」を12月6日に開催する。それに伴い、16日からプロダクト（アプリ／Webサービス／ゲ […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="ミカサ商事、「gemini」活用した「校務の効率化」無料セミナー全国3都市で開催 ミカサ商事は、googleの生成ai「gemini」を活用した校務効率化をテーマにした教育機関向け無料セミナー「先生の課題を今すぐ解決！geminiで校務＆授業大改革セミナー」を、 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17mikasa-4/" target="_blank" rel="noopener">ミカサ商事、「Gemini」活用した「校務の効率化」無料セミナー全国3都市で開催</a>
-        <div class="summary">ミカサ商事は、Googleの生成AI「Gemini」を活用した校務効率化をテーマにした教育機関向け無料セミナー「先生の課題を今すぐ解決！Geminiで校務＆授業大改革セミナー」を、 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="金沢工業大学、高校教員対象「n-e.x.t.ハイスクール構想の実現に向けて」7月開催 金沢工業大学は、高校教員や教育委員会関係者を対象とした「dxハイスクール応援プログラムplus～n-e.x.t.ハイスクール構想の実現に向けて～」を7月18日・19日の2日間、開催 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17kanazawa-it-6/" target="_blank" rel="noopener">金沢工業大学、高校教員対象「N-E.X.T.ハイスクール構想の実現に向けて」7月開催</a>
-        <div class="summary">金沢工業大学は、高校教員や教育委員会関係者を対象とした「DXハイスクール応援プログラムplus～N-E.X.T.ハイスクール構想の実現に向けて～」を7月18日・19日の2日間、開催 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="inspire high、駒場東邦中・高で公開授業＆パネルディスカッション 23日開催 inspire highは、「教室と世界をつなぐ英語教育の授業実践｜公開授業＆パネルディスカッション。中高英語科教員向けセミナー」を6月23日に開催する。 aiの進化やグローバル化 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17inspirehigh-2/" target="_blank" rel="noopener">Inspire High、駒場東邦中・高で公開授業＆パネルディスカッション 23日開催</a>
-        <div class="summary">Inspire Highは、「教室と世界をつなぐ英語教育の授業実践｜公開授業＆パネルディスカッション。中高英語科教員向けセミナー」を6月23日に開催する。 AIの進化やグローバル化 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="jmc、japet&amp;cecが主催する生成ai活用や学校情報セキュリティをテーマとした7月18日の無料セミナーに参画 jmcは、日本教育情報化振興会（japet&amp;cec）が主催する、生成ai活用や学校情報セキュリティをテーマとした無料セミナー「aiが広げる新しい授業と、クラウドが変える先生 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17jmc-edu/" target="_blank" rel="noopener">JMC、JAPET&amp;CECが主催する生成AI活用や学校情報セキュリティをテーマとした7月18日の無料セミナーに参画</a>
-        <div class="summary">JMCは、日本教育情報化振興会（JAPET&amp;CEC）が主催する、生成AI活用や学校情報セキュリティをテーマとした無料セミナー「AIが広げる新しい授業と、クラウドが変える先生 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="教師のためのedtech体験会、「powerpointでここまでできる！～教材づくりの腕を上げよう～」28日開催 edujapa!は、教師のためのedtech体験会「第24回：powerpointでここまでできる！～教材づくりの腕を上げよう～」を6月28日に開催する。 授業準備やプレゼンの資料 […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17edujapa/" target="_blank" rel="noopener">教師のためのEdTech体験会、「PowerPointでここまでできる！～教材づくりの腕を上げよう～」28日開催</a>
-        <div class="summary">EduJapa!は、教師のためのEdTech体験会「第24回：PowerPointでここまでできる！～教材づくりの腕を上げよう～」を6月28日に開催する。 授業準備やプレゼンの資料 […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="hdl、ドローン活用した競技型教育活動「ドロカツ大会」の説明会7月13・30日開催 hdlが運営するドロカツ実行委員会は、7月13・30日の2日間、関東と西日本の2会場で、学校・教育機関・教育事業者などを対象に「ドロカツ大会 体験・説明会」を無料開催する。 ドロカ […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17hdl-edu/" target="_blank" rel="noopener">HDL、ドローン活用した競技型教育活動「ドロカツ大会」の説明会7月13・30日開催</a>
-        <div class="summary">HDLが運営するドロカツ実行委員会は、7月13・30日の2日間、関東と西日本の2会場で、学校・教育機関・教育事業者などを対象に「ドロカツ大会 体験・説明会」を無料開催する。 ドロカ […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="マウスコンピューター、「親子パソコン組み立て教室」8月14日・15日開催 マウスコンピューターは、小学6年生とその保護者を対象とした体験型イベント「親子パソコン組み立て教室」を8月14日と15日の2日間、長野県飯山市で開催する。 同教室は、親子でパソコン […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17mouse-jp-2/" target="_blank" rel="noopener">マウスコンピューター、「親子パソコン組み立て教室」8月14日・15日開催</a>
-        <div class="summary">マウスコンピューターは、小学6年生とその保護者を対象とした体験型イベント「親子パソコン組み立て教室」を8月14日と15日の2日間、長野県飯山市で開催する。 同教室は、親子でパソコン […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="保護者連絡アプリ「コノベル」のvish、「児発管の本音と現場の実際」7月3日開催 vishは、児童発達支援管理責任者（児発管）を対象とした無料オンラインセミナー「児発管の井戸端支援会議！～実際の事例から考える、よりよい支援のカタチ～」を7月3日に開催する。 同セ […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17vish-7/" target="_blank" rel="noopener">保護者連絡アプリ「コノベル」のVISH、「児発管の本音と現場の実際」7月3日開催</a>
-        <div class="summary">VISHは、児童発達支援管理責任者（児発管）を対象とした無料オンラインセミナー「児発管の井戸端支援会議！～実際の事例から考える、よりよい支援のカタチ～」を7月3日に開催する。 同セ […]</div></td>
-    </tr><tr data-region="jp" data-source="ICT教育ニュース" data-text="スタディラボ、無料オンラインセミナー「ai時代に教室長が持つべきコーチングスキルとは」23～26日開催 スタディラボは、fceとともに、6月23〜26日の4日間、学習塾などの教育現場で生徒の指導にあたる教室長や講師を対象に、「生徒が自ら動き出す！ai時代に教室長が持つべき最強のコーチ […]">
-      <td class="date">2026-06-17</td>
-      <td class="src">🇯🇵 ICT教育ニュース</td>
-      <td class="title"><a href="https://ict-enews.net/2026/06/17studylab-2/" target="_blank" rel="noopener">スタディラボ、無料オンラインセミナー「AI時代に教室長が持つべきコーチングスキルとは」23～26日開催</a>
-        <div class="summary">スタディラボは、FCEとともに、6月23〜26日の4日間、学習塾などの教育現場で生徒の指導にあたる教室長や講師を対象に、「生徒が自ら動き出す！AI時代に教室長が持つべき最強のコーチ […]</div></td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【高校受験2027】北海道公立高、学校裁量一覧を公表…傾斜配点は12校 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86431.html" target="_blank" rel="noopener">【高校受験2027】北海道公立高、学校裁量一覧を公表…傾斜配点は12校</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="神戸市、平日も含めた部活動の地域展開「コベカツ」9月開始 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13476.html" target="_blank" rel="noopener">神戸市、平日も含めた部活動の地域展開「コベカツ」9月開始</a>
-        </td>
-    </tr><tr data-region="global" data-source="eSchool News" data-text="with students tuning out, it’s time to rethink the classroom across classrooms right now, many educators are noticing the same shift: students are even harder to reach than they were just a short time ago. in a recent survey, teachers pointed to rising disengagement as a growing c…">
-      <td class="date">2026-06-16</td>
-      <td class="src">🌐 eSchool News</td>
-      <td class="title"><a href="https://www.eschoolnews.com/innovative-teaching/2026/06/16/with-students-tuning-out-its-time-to-rethink-the-classroom/" target="_blank" rel="noopener">With students tuning out, it’s time to rethink the classroom</a>
-        <div class="summary">Across classrooms right now, many educators are noticing the same shift: Students are even harder to reach than they were just a short time ago. In a recent survey, teachers pointed to rising disengagement as a growing c…</div></td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】鹿児島県1次、31人増の1,116人が受験…2.11倍 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13475.html" target="_blank" rel="noopener">【教員採用】鹿児島県1次、31人増の1,116人が受験…2.11倍</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】小中学生「fmvパソコン組み立て教室」8/22 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86430.html" target="_blank" rel="noopener">【夏休み2026】小中学生「FMVパソコン組み立て教室」8/22</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】相模原市の応募倍率2.9倍…大3生選考に132人 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13474.html" target="_blank" rel="noopener">【教員採用】相模原市の応募倍率2.9倍…大3生選考に132人</a>
-        </td>
-    </tr><tr data-region="global" data-source="Tech &amp; Learning" data-text="bad ai policy is worse than no policy at all. how to build one that works conversations with kevin hogan: schoolai policy analyst sasha luks-morgan breaks down the three pillars every district ai policy needs">
-      <td class="date">2026-06-16</td>
-      <td class="src">🌐 Tech &amp; Learning</td>
-      <td class="title"><a href="https://www.techlearning.com/technology/ai/bad-ai-policy-is-worse-than-no-policy-at-all-how-to-build-one-that-works" target="_blank" rel="noopener">Bad AI Policy Is Worse Than No Policy at All. How to Build One That Works</a>
-        <div class="summary">Conversations with Kevin Hogan: SchoolAI policy analyst Sasha Luks-Morgan breaks down the three pillars every district AI policy needs</div></td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="小学校のユニークなノート回収活動を募集「つなげるーぱ！アワード2026」 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13473.html" target="_blank" rel="noopener">小学校のユニークなノート回収活動を募集「つなげるーぱ！アワード2026」</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="千葉県立高校の転編入学…千葉や船橋など全日制118校、千葉中は3年生限定 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86429.html" target="_blank" rel="noopener">千葉県立高校の転編入学…千葉や船橋など全日制118校、千葉中は3年生限定</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="東京都、探究型アントレプレナーシップ教材を無償提供…先着30校 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13472.html" target="_blank" rel="noopener">東京都、探究型アントレプレナーシップ教材を無償提供…先着30校</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】福島県の志願者数1,416人…倍率2.1倍 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13471.html" target="_blank" rel="noopener">【教員採用】福島県の志願者数1,416人…倍率2.1倍</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】18歳以下無料「のだめカンタービレ」札幌で朗読×オーケストラ公演 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86428.html" target="_blank" rel="noopener">【夏休み2026】18歳以下無料「のだめカンタービレ」札幌で朗読×オーケストラ公演</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【小学校受験】オンライン学校説明会6月…洗足・開智ら10校 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86427.html" target="_blank" rel="noopener">【小学校受験】オンライン学校説明会6月…洗足・開智ら10校</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】武蔵野大、プログラミングや天体観測など親子向け体験講座8月 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86426.html" target="_blank" rel="noopener">【夏休み2026】武蔵野大、プログラミングや天体観測など親子向け体験講座8月</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】関東の工場見学5選…鉛筆・コーラ・造幣局 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86425.html" target="_blank" rel="noopener">【夏休み2026】関東の工場見学5選…鉛筆・コーラ・造幣局</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】都立美術館・博物館6施設が夜間開館「サマーナイトミュージアム」 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86424.html" target="_blank" rel="noopener">【夏休み2026】都立美術館・博物館6施設が夜間開館「サマーナイトミュージアム」</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】小中高生「手づくりレッツノート工房」パナソニック神戸8/1 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86423.html" target="_blank" rel="noopener">【夏休み2026】小中高生「手づくりレッツノート工房」パナソニック神戸8/1</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="教育dx、成功事例から「設計原理」の共有へ…岡山大が新pf開発着手 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13470.html" target="_blank" rel="noopener">教育DX、成功事例から「設計原理」の共有へ…岡山大が新PF開発着手</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="教職課程に強み専門性、多様な教師集団の育成へ改革…二次まとめ公表 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13469.html" target="_blank" rel="noopener">教職課程に強み専門性、多様な教師集団の育成へ改革…二次まとめ公表</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】北海道科学大、夜のキャンパス開放7/24…アニメ制作も ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86422.html" target="_blank" rel="noopener">【夏休み2026】北海道科学大、夜のキャンパス開放7/24…アニメ制作も</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="国際情報オリンピック2028、10年ぶりに日本で開催決定 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86421.html" target="_blank" rel="noopener">国際情報オリンピック2028、10年ぶりに日本で開催決定</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】金沢工業大、高校生向け「kit数理講座」7/18…先着50名 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86420.html" target="_blank" rel="noopener">【夏休み2026】金沢工業大、高校生向け「KIT数理講座」7/18…先着50名</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="dmm英会話「iknow!」教育機関向けに1年間無料提供…高校受験カテゴリも ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13468.html" target="_blank" rel="noopener">DMM英会話「iKnow!」教育機関向けに1年間無料提供…高校受験カテゴリも</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】愛知県岡崎市「英語1dayキャンプ」7月…スピーチ締切6/20 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86419.html" target="_blank" rel="noopener">【夏休み2026】愛知県岡崎市「英語1Dayキャンプ」7月…スピーチ締切6/20</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】神奈川県、夏期試験の応募状況…倍率3.6倍 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13467.html" target="_blank" rel="noopener">【教員採用】神奈川県、夏期試験の応募状況…倍率3.6倍</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="22団体出展「学生のためのボランティアexpo 2026」大阪7/5 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86418.html" target="_blank" rel="noopener">22団体出展「学生のためのボランティアEXPO 2026」大阪7/5</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="金沢工大、高校教員向け「dxハイスクール応援プログラム」7/18・19 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13466.html" target="_blank" rel="noopener">金沢工大、高校教員向け「DXハイスクール応援プログラム」7/18・19</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】岡山県の小学生向け職業体験…銀行や病院など8コース無料 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86417.html" target="_blank" rel="noopener">【夏休み2026】岡山県の小学生向け職業体験…銀行や病院など8コース無料</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="上智大×板橋区、外国につながる子供の日本語教育支援 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/16/13465.html" target="_blank" rel="noopener">上智大×板橋区、外国につながる子供の日本語教育支援</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【大学受験2026】共テ利用選抜、志願者約10万人増…倍率22.8倍に上昇 ">
-      <td class="date">2026-06-16</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/16/86416.html" target="_blank" rel="noopener">【大学受験2026】共テ利用選抜、志願者約10万人増…倍率22.8倍に上昇</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】無料で楽しめる関東の工場見学5選…自由研究にも ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86415.html" target="_blank" rel="noopener">【夏休み2026】無料で楽しめる関東の工場見学5選…自由研究にも</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="学校を超えた教員同士の関わりを…teacher’s［shift］ ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86414.html" target="_blank" rel="noopener">学校を超えた教員同士の関わりを…Teacher’s［Shift］</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】音楽劇「赤毛のアン」子供870名無料招待 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86413.html" target="_blank" rel="noopener">【夏休み2026】音楽劇「赤毛のアン」子供870名無料招待</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="学校を超えた教員同士の関わりを…teacher’s［shift］ ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13464.html" target="_blank" rel="noopener">学校を超えた教員同士の関わりを…Teacher’s［Shift］</a>
-        </td>
-    </tr><tr data-region="global" data-source="eSchool News" data-text="maybe we have too much teacher training “maybe we have too much teacher training.” that headline is a sentence i never thought i’d write, given that i run a company built around supporting teachers’ professional growth. but it has been sitting with me since i …">
-      <td class="date">2026-06-15</td>
-      <td class="src">🌐 eSchool News</td>
-      <td class="title"><a href="https://www.eschoolnews.com/educational-leadership/2026/06/15/maybe-we-have-too-much-teacher-training/" target="_blank" rel="noopener">Maybe we have too much teacher training</a>
-        <div class="summary">“Maybe we have too much teacher training.” That headline is a sentence I never thought I’d write, given that I run a company built around supporting teachers’ professional growth. But it has been sitting with me since I …</div></td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】高校生対象、プログラミング「python quest」先着100名 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86412.html" target="_blank" rel="noopener">【夏休み2026】高校生対象、プログラミング「Python quest」先着100名</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="未来のなでしこへの第一歩…jfa「first touch」8/2島根会場 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86411.html" target="_blank" rel="noopener">未来のなでしこへの第一歩…JFA「First Touch」8/2島根会場</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="大学発ベンチャー数ランキング、東大595社で首位…名大も増加顕著 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13463.html" target="_blank" rel="noopener">大学発ベンチャー数ランキング、東大595社で首位…名大も増加顕著</a>
-        </td>
-    </tr><tr data-region="global" data-source="Tech &amp; Learning" data-text="a day in the life of a principal using ai how one school principal uses ai to save time on administrative tasks that can be better spent with students and staff">
-      <td class="date">2026-06-15</td>
-      <td class="src">🌐 Tech &amp; Learning</td>
-      <td class="title"><a href="https://www.techlearning.com/technology/ai/a-day-in-the-life-of-a-principal-using-ai" target="_blank" rel="noopener">A Day In The Life Of A Principal Using AI</a>
-        <div class="summary">How one school principal uses AI to save time on administrative tasks that can be better spent with students and staff</div></td>
-    </tr><tr data-region="global" data-source="Tech &amp; Learning" data-text="the presentation station should belong to the space, not the speaker a well-run event space should not depend on every speaker plugging in, pairing, restarting, authenticating, and hoping for the best.">
-      <td class="date">2026-06-15</td>
-      <td class="src">🌐 Tech &amp; Learning</td>
-      <td class="title"><a href="https://www.techlearning.com/technology/the-presentation-station-should-belong-to-the-space-not-the-speaker" target="_blank" rel="noopener">The Presentation Station Should Belong to the Space, Not the Speaker</a>
-        <div class="summary">A well-run event space should not depend on every speaker plugging in, pairing, restarting, authenticating, and hoping for the best.</div></td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="2級建築施工管理技士 前期一次検定「web採点」日建学院6/22まで ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86410.html" target="_blank" rel="noopener">2級建築施工管理技士 前期一次検定「WEB採点」日建学院6/22まで</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="福岡工大、インドの大学・it企業と連携協定…次世代リーダー育成へ ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13462.html" target="_blank" rel="noopener">福岡工大、インドの大学・IT企業と連携協定…次世代リーダー育成へ</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="目指せ未来のw杯代表「jfaユニクロサッカーキッズ」参加者募集 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86409.html" target="_blank" rel="noopener">目指せ未来のW杯代表「JFAユニクロサッカーキッズ」参加者募集</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="小学生対象、鉄道新聞コンクール…参加賞を全員に贈呈 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86408.html" target="_blank" rel="noopener">小学生対象、鉄道新聞コンクール…参加賞を全員に贈呈</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="学校給食の国産食材9割、鳥取98.4％でトップ…文科省 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13461.html" target="_blank" rel="noopener">学校給食の国産食材9割、鳥取98.4％でトップ…文科省</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="ai活用加速へ、文科省の大規模集積システムに1件を採択 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13460.html" target="_blank" rel="noopener">AI活用加速へ、文科省の大規模集積システムに1件を採択</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】土木学会、オープンキャンパス7/25…自由研究のヒントにも ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86407.html" target="_blank" rel="noopener">【夏休み2026】土木学会、オープンキャンパス7/25…自由研究のヒントにも</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="日本語教師、学び直し・復帰促進の研修動画12本を無料公開…文科省 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13459.html" target="_blank" rel="noopener">日本語教師、学び直し・復帰促進の研修動画12本を無料公開…文科省</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】羽田空港見学会、管制塔や格納庫公開…全14回 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86406.html" target="_blank" rel="noopener">【夏休み2026】羽田空港見学会、管制塔や格納庫公開…全14回</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="デジタル教科書法成立、紙とデジタル活用指針策定へ…文科相6/12会見 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13458.html" target="_blank" rel="noopener">デジタル教科書法成立、紙とデジタル活用指針策定へ…文科相6/12会見</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="都内私立の転・編入試験（1学期末）中学81校・高校96校実施 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86405.html" target="_blank" rel="noopener">都内私立の転・編入試験（1学期末）中学81校・高校96校実施</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用2027】山梨県、志願倍率2.11倍…大3生240人志願 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13457.html" target="_blank" rel="noopener">【教員採用2027】山梨県、志願倍率2.11倍…大3生240人志願</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】n高グループ、10日間の国際教育プログラム…高校生募集 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86404.html" target="_blank" rel="noopener">【夏休み2026】N高グループ、10日間の国際教育プログラム…高校生募集</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】親子で学ぶ「議事堂見学と投票体験」埼玉8/18 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86403.html" target="_blank" rel="noopener">【夏休み2026】親子で学ぶ「議事堂見学と投票体験」埼玉8/18</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【高校野球2026夏】東・西東京大会組合せ決定、関東第一は7/13初戦 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86402.html" target="_blank" rel="noopener">【高校野球2026夏】東・西東京大会組合せ決定、関東第一は7/13初戦</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】サッカーw杯熱狂の今！小学生向け自由研究テーマアイデア集 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86401.html" target="_blank" rel="noopener">【夏休み2026】サッカーW杯熱狂の今！小学生向け自由研究テーマアイデア集</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】親子縄文土器作り…都立埋蔵文化財センター ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86400.html" target="_blank" rel="noopener">【夏休み2026】親子縄文土器作り…都立埋蔵文化財センター</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【大学受験2026】阪公大 高校別合格数、top10に公立8校 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86399.html" target="_blank" rel="noopener">【大学受験2026】阪公大 高校別合格数、TOP10に公立8校</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="国立と私立大の学費格差を検討、公開研究会7/6オンライン ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13456.html" target="_blank" rel="noopener">国立と私立大の学費格差を検討、公開研究会7/6オンライン</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【中学受験】今週末行ける中高一貫「学校見学」6/20-21…明大明治など10校 ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/15/86398.html" target="_blank" rel="noopener">【中学受験】今週末行ける中高一貫「学校見学」6/20-21…明大明治など10校</a>
-        </td>
-    </tr><tr data-region="global" data-source="EdSurge" data-text="i built an ai grading tool. then a student thanked me for words i didn’t write. how to keep teachers in charge when ai does the grading.">
-      <td class="date">2026-06-15</td>
-      <td class="src">🌐 EdSurge</td>
-      <td class="title"><a href="https://edsurge.com/news/i-built-an-ai-grading-tool-then-a-student-thanked-me-for-words-i-didnt-write" target="_blank" rel="noopener">I Built an AI Grading Tool. Then a Student Thanked Me for Words I Didn’t Write.</a>
-        <div class="summary">How to keep teachers in charge when AI does the grading.</div></td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="デジタル教科書正式導入、小学校に「情報の領域」付加…教育業界ニュースまとめ読み ">
-      <td class="date">2026-06-15</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/15/13455.html" target="_blank" rel="noopener">デジタル教科書正式導入、小学校に「情報の領域」付加…教育業界ニュースまとめ読み</a>
-        </td>
-    </tr><tr data-region="global" data-source="EdTech Magazine" data-text="deepfakes in education: cyberbullying in the age of ai in a k–12 setting, deepfakes hold a lot of power. these falsified images or videos, virtually impossible to identify with an untrained eye, can be wielded to harm educators’ reputations, cyberbully vulnerable students, a…">
-      <td class="date">2026-06-13</td>
-      <td class="src">🌐 EdTech Magazine</td>
-      <td class="title"><a href="https://edtechmagazine.com/k12/article/2026/06/deepfakes-education-cyberbullying-age-ai-perfcon" target="_blank" rel="noopener">Deepfakes in Education: Cyberbullying in the Age of AI</a>
-        <div class="summary">In a K–12 setting, deepfakes hold a lot of power. These falsified images or videos, virtually impossible to identify with an untrained eye, can be wielded to harm educators’ reputations, cyberbully vulnerable students, a…</div></td>
-    </tr><tr data-region="global" data-source="EdTech Magazine" data-text="ctem offers a better way to manage cyber risk in k–12 lately, school-related data breaches seem to keep coming. powerschool and canvas made major headlines this year. countless smaller incidents may not hit the news, but they disrupt instruction and expose sensitive student…">
-      <td class="date">2026-06-13</td>
-      <td class="src">🌐 EdTech Magazine</td>
-      <td class="title"><a href="https://edtechmagazine.com/k12/article/2026/06/ctem-cyber-risk-management-k12-districts" target="_blank" rel="noopener">CTEM Offers a Better Way to Manage Cyber Risk in K–12</a>
-        <div class="summary">Lately, school-related data breaches seem to keep coming. PowerSchool and Canvas made major headlines this year. Countless smaller incidents may not hit the news, but they disrupt instruction and expose sensitive student…</div></td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【クレーム対応q＆a】緊急時に連絡アプリが使えない ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13454.html" target="_blank" rel="noopener">【クレーム対応Q＆A】緊急時に連絡アプリが使えない</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="栃木県民の日記念イベント6/13…動物ふれあいやゲーム体験、県内外の施設優待も ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86397.html" target="_blank" rel="noopener">栃木県民の日記念イベント6/13…動物ふれあいやゲーム体験、県内外の施設優待も</a>
-        </td>
-    </tr><tr data-region="global" data-source="eSchool News" data-text="leading in the in-between: a multi-track approach to leadership growth there is a period in the school leadership journey that we do not talk about enough: the time between earning an administrative license and actually becoming a school leader.">
-      <td class="date">2026-06-12</td>
-      <td class="src">🌐 eSchool News</td>
-      <td class="title"><a href="https://www.eschoolnews.com/educational-leadership/2026/06/12/leading-in-the-in-between-a-multi-track-approach-to-leadership-growth/" target="_blank" rel="noopener">Leading in the in-between: A multi-track approach to leadership growth</a>
-        <div class="summary">There is a period in the school leadership journey that we do not talk about enough: the time between earning an administrative license and actually becoming a school leader.</div></td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="筑波大・千葉大など10校が申請…文科省「大学院教育拠点創出事業」 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13453.html" target="_blank" rel="noopener">筑波大・千葉大など10校が申請…文科省「大学院教育拠点創出事業」</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="「送り出してよかった」。地方から関西大学へ進学した学生と保護者が語る4年間の成長 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86396.html" target="_blank" rel="noopener">「送り出してよかった」。地方から関西大学へ進学した学生と保護者が語る4年間の成長</a>
-        </td>
-    </tr><tr data-region="global" data-source="Tech &amp; Learning" data-text="integrating augmentative and alternative communication (aac) as an inclusive practice innovative leader award - kimberly zajac discusses why digital accessibility is important beyond compliance">
-      <td class="date">2026-06-12</td>
-      <td class="src">🌐 Tech &amp; Learning</td>
-      <td class="title"><a href="https://www.techlearning.com/learning/leadership/integrating-augmentative-and-alternative-communication-aac-as-an-inclusive-practice" target="_blank" rel="noopener">Integrating Augmentative and Alternative Communication (AAC) As An Inclusive Practice</a>
-        <div class="summary">Innovative Leader Award - Kimberly Zajac discusses why digital accessibility is important beyond compliance</div></td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="秦野・大磯高に教職科目を新設、先生志望を支援…神奈川県 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13452.html" target="_blank" rel="noopener">秦野・大磯高に教職科目を新設、先生志望を支援…神奈川県</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】無料で学べる関東の工場見学5選…醤油やラスク ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86395.html" target="_blank" rel="noopener">【夏休み2026】無料で学べる関東の工場見学5選…醤油やラスク</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】岡山県、80人増の1,663人出願…倍率4.3倍 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13451.html" target="_blank" rel="noopener">【教員採用】岡山県、80人増の1,663人出願…倍率4.3倍</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="6月の満月「ストロベリームーン」30日に見ごろ…夏至後最初の満月 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86394.html" target="_blank" rel="noopener">6月の満月「ストロベリームーン」30日に見ごろ…夏至後最初の満月</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】埼玉県、全体倍率2.9倍に低下…大3生は289人増 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13450.html" target="_blank" rel="noopener">【教員採用】埼玉県、全体倍率2.9倍に低下…大3生は289人増</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="千葉県民の日6/15、宿泊施設や博物館で子供の利用料が無料 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86393.html" target="_blank" rel="noopener">千葉県民の日6/15、宿泊施設や博物館で子供の利用料が無料</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】山口県の第1次試験、416人合格 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13449.html" target="_blank" rel="noopener">【教員採用】山口県の第1次試験、416人合格</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【高校野球2026夏】14都道府県の15地方大会j:com生中継 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86392.html" target="_blank" rel="noopener">【高校野球2026夏】14都道府県の15地方大会J:COM生中継</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="東京都子育て支援員研修、第2期受講生4コースで募集 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13448.html" target="_blank" rel="noopener">東京都子育て支援員研修、第2期受講生4コースで募集</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="ガチャで日本文化を探究、小中学校向け「sparke」受付開始 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13447.html" target="_blank" rel="noopener">ガチャで日本文化を探究、小中学校向け「SPARKE」受付開始</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【大学受験2026】長崎大で合否判定ミス、共通テスト点数を算入せず…1人が追加合格 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86391.html" target="_blank" rel="noopener">【大学受験2026】長崎大で合否判定ミス、共通テスト点数を算入せず…1人が追加合格</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="ネットの危険…教職員向け情報モラルセミナー ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13446.html" target="_blank" rel="noopener">ネットの危険…教職員向け情報モラルセミナー</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用】福岡市1,632人志願…倍率5.6倍に上昇 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13445.html" target="_blank" rel="noopener">【教員採用】福岡市1,632人志願…倍率5.6倍に上昇</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="神奈川私立中高「2学期」転編入学…鎌倉学園、横浜女学院など71校 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86390.html" target="_blank" rel="noopener">神奈川私立中高「2学期」転編入学…鎌倉学園、横浜女学院など71校</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="「i am like apple.」⁉ 中学英語でつまずきやすい「be動詞」をしっかり理解するには ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86389.html" target="_blank" rel="noopener">「I am like apple.」⁉ 中学英語でつまずきやすい「be動詞」をしっかり理解するには</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="中教審、次期指導要領「体育」の骨子案…多様な楽しみ方重視 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13444.html" target="_blank" rel="noopener">中教審、次期指導要領「体育」の骨子案…多様な楽しみ方重視</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="千葉県、学校の自殺予防対策…段階ごと対応を整理 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13443.html" target="_blank" rel="noopener">千葉県、学校の自殺予防対策…段階ごと対応を整理</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【夏休み2026】髙尾山で修行体験、小学生向け1泊2日合宿…6/26締切 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86388.html" target="_blank" rel="noopener">【夏休み2026】髙尾山で修行体験、小学生向け1泊2日合宿…6/26締切</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="次期学習指導要領、部活動の意義維持し「地域展開」を制度化 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13442.html" target="_blank" rel="noopener">次期学習指導要領、部活動の意義維持し「地域展開」を制度化</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="【中学受験2027】東京都立中高一貫校の入試日程…一般枠2/3 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86387.html" target="_blank" rel="noopener">【中学受験2027】東京都立中高一貫校の入試日程…一般枠2/3</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リセマム" data-text="サイバーセキュリティ学科とデータサイエンス修了証書プログラム新設…テンプル大 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リセマム</td>
-      <td class="title"><a href="https://resemom.jp/article/2026/06/12/86386.html" target="_blank" rel="noopener">サイバーセキュリティ学科とデータサイエンス修了証書プログラム新設…テンプル大</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="女子stem支援に21社参画、愛知の3者が連携協定 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13441.html" target="_blank" rel="noopener">女子STEM支援に21社参画、愛知の3者が連携協定</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【edix2026】不登校は未来へのチャージタイム…中川翔子氏×石井しこう氏 ">
-      <td class="date">2026-06-12</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/12/13440.html" target="_blank" rel="noopener">【EDIX2026】不登校は未来へのチャージタイム…中川翔子氏×石井しこう氏</a>
-        </td>
-    </tr><tr data-region="global" data-source="EdSurge" data-text="ai won’t replace educators. but it is changing how students learn. the question for educators: how to know when ai supports real learning.">
-      <td class="date">2026-06-12</td>
-      <td class="src">🌐 EdSurge</td>
-      <td class="title"><a href="https://edsurge.com/news/ai-wont-replace-educators-but-it-is-changing-how-students-learn" target="_blank" rel="noopener">AI Won’t Replace Educators. But It is Changing How Students Learn.</a>
-        <div class="summary">The question for educators: How to know when AI supports real learning.</div></td>
-    </tr><tr data-region="global" data-source="EdTech Magazine" data-text="rethinking cellphone management in k–12 classrooms across k–12 schools, the conversation around student device use has shifted from whether phones belong in classrooms to how schools can manage them in a way that supports learning. as digital devices become increasingly …">
-      <td class="date">2026-06-12</td>
-      <td class="src">🌐 EdTech Magazine</td>
-      <td class="title"><a href="https://edtechmagazine.com/k12/article/2026/06/rethinking-cellphone-management-k-12-classrooms" target="_blank" rel="noopener">Rethinking Cellphone Management in K–12 Classrooms</a>
-        <div class="summary">Across K–12 schools, the conversation around student device use has shifted from whether phones belong in classrooms to how schools can manage them in a way that supports learning. As digital devices become increasingly …</div></td>
-    </tr><tr data-region="global" data-source="eSchool News" data-text="the hidden skill many kids are losing once upon a time. for generations, those four words were an invitation. children leaned in because a story was beginning. they would listen closely, follow the characters, and stay with the plot until the end.">
-      <td class="date">2026-06-11</td>
-      <td class="src">🌐 eSchool News</td>
-      <td class="title"><a href="https://www.eschoolnews.com/innovative-teaching/2026/06/11/the-hidden-skill-many-kids-are-losing/" target="_blank" rel="noopener">The hidden skill many kids are losing</a>
-        <div class="summary">Once upon a time. For generations, those four words were an invitation. Children leaned in because a story was beginning. They would listen closely, follow the characters, and stay with the plot until the end.</div></td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="hisとncn、米国大学奨学金制度の普及へ…返済不要・授業料半額免除も ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13439.html" target="_blank" rel="noopener">HISとNCN、米国大学奨学金制度の普及へ…返済不要・授業料半額免除も</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="貧困・教育格差に直面する子供を支援「nagaseこどもみらい財団」設立 ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13438.html" target="_blank" rel="noopener">貧困・教育格差に直面する子供を支援「NAGASEこどもみらい財団」設立</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="jx金属、学生研究支援プログラム…研究材料を無償提供 ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13437.html" target="_blank" rel="noopener">JX金属、学生研究支援プログラム…研究材料を無償提供</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="世界8万人超が参加するロボコンftc、中高生チーム募集 ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13436.html" target="_blank" rel="noopener">世界8万人超が参加するロボコンFTC、中高生チーム募集</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="小学校に「情報の領域」付加、中学は新教科創設へ…次期指導要領 ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13435.html" target="_blank" rel="noopener">小学校に「情報の領域」付加、中学は新教科創設へ…次期指導要領</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="授業改善・校務dxに役立つ「プチ学習会」6月…文科省 ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13434.html" target="_blank" rel="noopener">授業改善・校務DXに役立つ「プチ学習会」6月…文科省</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="男女共同参画機構、オンライン研修を無料開講…基礎から分野別研修まで ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13433.html" target="_blank" rel="noopener">男女共同参画機構、オンライン研修を無料開講…基礎から分野別研修まで</a>
-        </td>
-    </tr><tr data-region="jp" data-source="リシード(ReseEd)" data-text="【教員採用2027】横浜市、既合格者233人に…春試験は116人合格・倍率2.2倍 ">
-      <td class="date">2026-06-11</td>
-      <td class="src">🇯🇵 リシード(ReseEd)</td>
-      <td class="title"><a href="https://reseed.resemom.jp/article/2026/06/11/13432.html" target="_blank" rel="noopener">【教員採用2027】横浜市、既合格者233人に…春試験は116人合格・倍率2.2倍</a>
-        </td>
-    </tr><tr data-region="global" data-source="EdSurge" data-text="what tiktok is teaching future teachers (that we aren’t) a new educational epistemology for today's teachers.">
-      <td class="date">2026-06-11</td>
-      <td class="src">🌐 EdSurge</td>
-      <td class="title"><a href="https://edsurge.com/news/what-tiktok-is-teaching-future-teachers-that-we-arent" target="_blank" rel="noopener">What TikTok Is Teaching Future Teachers (That We Aren’t)</a>
-        <div class="summary">A new educational epistemology for today's teachers.</div></td>
-    </tr><tr data-region="global" data-source="EdTech Magazine" data-text="4 tips for upgrading k–12 physical security systems weapon detection solutions have evolved from locked doors and metal detectors to ai-powered systems. what were previously one-off purchases are now integrated with a broader, layered approach to safety that balances secu…">
-      <td class="date">2026-06-11</td>
-      <td class="src">🌐 EdTech Magazine</td>
-      <td class="title"><a href="https://edtechmagazine.com/k12/article/2026/06/4-tips-upgrading-k-12-physical-security-systems" target="_blank" rel="noopener">4 Tips for Upgrading K–12 Physical Security Systems</a>
-        <div class="summary">Weapon detection solutions have evolved from locked doors and metal detectors to AI-powered systems. What were previously one-off purchases are now integrated with a broader, layered approach to safety that balances secu…</div></td>
-    </tr></tbody></table>
+
+  <div class="cards" id="list"><a class="card" href="https://resemom.jp/article/2026/06/17/86436.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【高校受験2027】埼玉県公立高の募集人員、全日制1,600人減 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【高校受験2027】埼玉県公立高の募集人員、全日制1,600人減</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/17/13481.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】石川県の志願状況…倍率2.5倍、大3選考は16人増の230人 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】石川県の志願状況…倍率2.5倍、大3選考は16人増の230人</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/17/13480.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【edix2026】copilot+ pcで教育の未来を体感する ">
+      <div class="tags"><span class="tag t-ai">生成AI</span></div>
+      <h3>【EDIX2026】Copilot+ PCで教育の未来を体感する</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/17/86435.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】デジタル庁の仕事体験「こども霞が関見学デー」7/29-30 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】デジタル庁の仕事体験「こども霞が関見学デー」7/29-30</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/17/13479.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="小学校で旧石器時代扱わず「中高で取り扱う」文科相6/16会見 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>小学校で旧石器時代扱わず「中高で取り扱う」文科相6/16会見</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/17/86434.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】野球殿堂博物館、小学生「野球で自由研究」 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】野球殿堂博物館、小学生「野球で自由研究」</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/17/86433.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="生成aiで社会課題を解決「都立学校ai lab」アプリ開発ワークショップ…中高生募集 ">
+      <div class="tags"><span class="tag t-ai">生成AI</span></div>
+      <h3>生成AIで社会課題を解決「都立学校AI Lab」アプリ開発ワークショップ…中高生募集</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/17/13478.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="生成ai活用と学校情報セキュリティを学ぶセミナー7/18 ">
+      <div class="tags"><span class="tag t-ai">生成AI</span><span class="tag t-ev">イベント</span></div>
+      <h3>生成AI活用と学校情報セキュリティを学ぶセミナー7/18</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17yuber-4/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="ユーバー、「プログラミング講師育成講座・入門編（動画・自学版）」を完全無料化 ユーバーは6月16日、同社が提供するプログラミング講師育成プログラムにおいて、「プログラミング講師講座・入門編（動画・自学版）」を完全無料化することを発表した。 同講座は、子ども向 […]">
+      <div class="tags"><span class="tag t-prog">プログラミング</span></div>
+      <h3>ユーバー、「プログラミング講師育成講座・入門編（動画・自学版）」を完全無料化</h3>
+      <p class="summary">ユーバーは6月16日、同社が提供するプログラミング講師育成プログラムにおいて、「プログラミング講師講座・入門編（動画・自学版）」を完全無料化することを発表した。 同講座は、子ども向 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/17/86432.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【大学受験2026】岡山大 高校別合格数、17位まで公立独占 ">
+      <div class="tags"><span class="tag t-univ">大学</span><span class="tag t-k12">K-12</span></div>
+      <h3>【大学受験2026】岡山大 高校別合格数、17位まで公立独占</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/17/13477.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="coiu、全国8校と高大連携協定を締結…探究支援プログラムや奨学金付入試制度 ">
+      <div class="tags"></div>
+      <h3>CoIU、全国8校と高大連携協定を締結…探究支援プログラムや奨学金付入試制度</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17city-ota/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="群馬・太田市、小中高生向けクリエイティブ体験講座「tsukurun trial in太田市」開催 群馬県太田市は、6月から2027年3月にかけて、小中高生を対象にしたデジタルクリエイティブ体験講座「tsukurun trial in太田市」を無料開催する。 同講座は、群馬県が運 […]">
+      <div class="tags"></div>
+      <h3>群馬・太田市、小中高生向けクリエイティブ体験講座「tsukurun trial in太田市」開催</h3>
+      <p class="summary">群馬県太田市は、6月から2027年3月にかけて、小中高生を対象にしたデジタルクリエイティブ体験講座「tsukurun trial in太田市」を無料開催する。 同講座は、群馬県が運 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17qubena-6/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="compass、小中校向けデジタルテスト「キュビナ テスト」が福岡市の「学習定着度調査」に採用 compassは16日、同社の小中学校向けデジタルテスト（cbt）サービス「キュビナ テスト」が、福岡県福岡市が独自に実施する「学習定着度調査」で採用されることになったと発表した。 […]">
+      <div class="tags"><span class="tag t-k12">K-12</span><span class="tag t-data">データ</span></div>
+      <h3>COMPASS、小中校向けデジタルテスト「キュビナ テスト」が福岡市の「学習定着度調査」に採用</h3>
+      <p class="summary">COMPASSは16日、同社の小中学校向けデジタルテスト（CBT）サービス「キュビナ テスト」が、福岡県福岡市が独自に実施する「学習定着度調査」で採用されることになったと発表した。 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17replayce/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="replayce、名古屋市から中高生向け実践型教育プログラム「nagoya ai youth camp」の企画・運営業務を受託 replayceは16日、名古屋市から「nagoya ai youth camp」の企画・運営業務を受託したと発表した。 初心者からすべての中高生を対象とした実践型教育プログラムを […]">
+      <div class="tags"></div>
+      <h3>RePlayce、名古屋市から中高生向け実践型教育プログラム「NAGOYA AI YOUTH CAMP」の企画・運営業務を受託</h3>
+      <p class="summary">RePlayceは16日、名古屋市から「NAGOYA AI YOUTH CAMP」の企画・運営業務を受託したと発表した。 初心者からすべての中高生を対象とした実践型教育プログラムを […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17school-voice-pj/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="裁量的な時間を「教職員の授業準備の時間に充てる」教職員が8割以上 =school voice project調べ= school voice projectは16日、文部科学省の特別部会で提案されている「裁量的な時間」の活用に関して教職員にアンケートした結果を公表した。 調査は、小中高校年齢の児 […]">
+      <div class="tags"><span class="tag t-k12">K-12</span><span class="tag t-data">データ</span></div>
+      <h3>裁量的な時間を「教職員の授業準備の時間に充てる」教職員が8割以上 =School Voice Project調べ=</h3>
+      <p class="summary">School Voice Projectは16日、文部科学省の特別部会で提案されている「裁量的な時間」の活用に関して教職員にアンケートした結果を公表した。 調査は、小中高校年齢の児 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17fullfact/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="fullfact、独自分析レポート「職場ai利用率から見る現場定着レポート 2026」公開 fullfactは15日、国内外の公的統計や国際機関のレポートを再分析した「職場ai利用率から見る現場定着レポート2026」を公開した。 同レポートは、aiの個人利用と職場での業務 […]">
+      <div class="tags"><span class="tag t-data">データ</span></div>
+      <h3>FULLFACT、独自分析レポート「職場AI利用率から見る現場定着レポート 2026」公開</h3>
+      <p class="summary">FULLFACTは15日、国内外の公的統計や国際機関のレポートを再分析した「職場AI利用率から見る現場定着レポート2026」を公開した。 同レポートは、AIの個人利用と職場での業務 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17meijo-u/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="名城大学、高齢者がaiを安心して活用できる社会へ aiリテラシー教育モデルの開発に着手 名城大学と国立長寿医療研究センターは15日、長寿科学振興財団が実施する「公益財団法人長寿科学振興財団高齢社会課題解決研究（ai）への助成」にて、課題1「高齢者向けaiリテラシーの向 […]">
+      <div class="tags"><span class="tag t-univ">大学</span></div>
+      <h3>名城大学、高齢者がAIを安心して活用できる社会へ AIリテラシー教育モデルの開発に着手</h3>
+      <p class="summary">名城大学と国立長寿医療研究センターは15日、長寿科学振興財団が実施する「公益財団法人長寿科学振興財団高齢社会課題解決研究（AI）への助成」にて、課題1「高齢者向けAIリテラシーの向 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17clark-2/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="クラーク記念国際高等学校、警視庁と連携し「高校生のためのsns・闇バイト防犯教室」を実施 クラーク記念国際高等学校およびクラークnext高等学校は、警視庁の協力のもと、両校の在籍生徒約1万1000名を対象とした「高校生のためのsns・トクリュウ（闇バイト）についての非行 […]">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>クラーク記念国際高等学校、警視庁と連携し「高校生のためのSNS・闇バイト防犯教室」を実施</h3>
+      <p class="summary">クラーク記念国際高等学校およびクラークNEXT高等学校は、警視庁の協力のもと、両校の在籍生徒約1万1000名を対象とした「高校生のためのSNS・トクリュウ（闇バイト）についての非行 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17peoplemedia/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="マイクロファン、教育用マイコン「trygear」用カラーledモジュールと多機能センサーモジュールを発売 ピープルメディア マイクロファン事業部は15日、教育現場での長年の知見を凝縮した新世代教育用マイコン基板シリーズ「trygear（トライギア）」を始動し、その周辺モジュールとして、 […]">
+      <div class="tags"></div>
+      <h3>マイクロファン、教育用マイコン「TRYGEAR」用カラーLEDモジュールと多機能センサーモジュールを発売</h3>
+      <p class="summary">ピープルメディア マイクロファン事業部は15日、教育現場での長年の知見を凝縮した新世代教育用マイコン基板シリーズ「TRYGEAR（トライギア）」を始動し、その周辺モジュールとして、 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17surala-24/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="すららネット、教委職員・学校教職員対象「ai時代の学習プロセス評価の在り方」23日開催 すららネットは、教育委員会職員と学校教職員を対象としたオンラインセミナー「ai時代の学習プロセス評価の在り方」を6月23日に開催する。 gigaスクール構想による1人1台端末の普及 […]">
+      <div class="tags"><span class="tag t-ev">イベント</span></div>
+      <h3>すららネット、教委職員・学校教職員対象「AI時代の学習プロセス評価の在り方」23日開催</h3>
+      <p class="summary">すららネットは、教育委員会職員と学校教職員を対象としたオンラインセミナー「AI時代の学習プロセス評価の在り方」を6月23日に開催する。 GIGAスクール構想による1人1台端末の普及 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17life-is-tech-5/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="ライフイズテック、アイデア×実装でイノベーターを輩出する中高生対象「テック甲子園」応募受付を開始 ライフイズテックは丸井グループと共同で、中高生を対象としたテクノロジーコンテスト「テック甲子園」を12月6日に開催する。それに伴い、16日からプロダクト（アプリ／webサービス／ゲ […]">
+      <div class="tags"></div>
+      <h3>ライフイズテック、アイデア×実装でイノベーターを輩出する中高生対象「テック甲子園」応募受付を開始</h3>
+      <p class="summary">ライフイズテックは丸井グループと共同で、中高生を対象としたテクノロジーコンテスト「テック甲子園」を12月6日に開催する。それに伴い、16日からプロダクト（アプリ／Webサービス／ゲ […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17mikasa-4/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="ミカサ商事、「gemini」活用した「校務の効率化」無料セミナー全国3都市で開催 ミカサ商事は、googleの生成ai「gemini」を活用した校務効率化をテーマにした教育機関向け無料セミナー「先生の課題を今すぐ解決！geminiで校務＆授業大改革セミナー」を、 […]">
+      <div class="tags"><span class="tag t-ai">生成AI</span><span class="tag t-ev">イベント</span></div>
+      <h3>ミカサ商事、「Gemini」活用した「校務の効率化」無料セミナー全国3都市で開催</h3>
+      <p class="summary">ミカサ商事は、Googleの生成AI「Gemini」を活用した校務効率化をテーマにした教育機関向け無料セミナー「先生の課題を今すぐ解決！Geminiで校務＆授業大改革セミナー」を、 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17kanazawa-it-6/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="金沢工業大学、高校教員対象「n-e.x.t.ハイスクール構想の実現に向けて」7月開催 金沢工業大学は、高校教員や教育委員会関係者を対象とした「dxハイスクール応援プログラムplus～n-e.x.t.ハイスクール構想の実現に向けて～」を7月18日・19日の2日間、開催 […]">
+      <div class="tags"><span class="tag t-univ">大学</span><span class="tag t-k12">K-12</span><span class="tag t-teach">教員</span></div>
+      <h3>金沢工業大学、高校教員対象「N-E.X.T.ハイスクール構想の実現に向けて」7月開催</h3>
+      <p class="summary">金沢工業大学は、高校教員や教育委員会関係者を対象とした「DXハイスクール応援プログラムplus～N-E.X.T.ハイスクール構想の実現に向けて～」を7月18日・19日の2日間、開催 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17inspirehigh-2/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="inspire high、駒場東邦中・高で公開授業＆パネルディスカッション 23日開催 inspire highは、「教室と世界をつなぐ英語教育の授業実践｜公開授業＆パネルディスカッション。中高英語科教員向けセミナー」を6月23日に開催する。 aiの進化やグローバル化 […]">
+      <div class="tags"><span class="tag t-ev">イベント</span><span class="tag t-teach">教員</span></div>
+      <h3>Inspire High、駒場東邦中・高で公開授業＆パネルディスカッション 23日開催</h3>
+      <p class="summary">Inspire Highは、「教室と世界をつなぐ英語教育の授業実践｜公開授業＆パネルディスカッション。中高英語科教員向けセミナー」を6月23日に開催する。 AIの進化やグローバル化 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17jmc-edu/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="jmc、japet&amp;cecが主催する生成ai活用や学校情報セキュリティをテーマとした7月18日の無料セミナーに参画 jmcは、日本教育情報化振興会（japet&amp;cec）が主催する、生成ai活用や学校情報セキュリティをテーマとした無料セミナー「aiが広げる新しい授業と、クラウドが変える先生 […]">
+      <div class="tags"><span class="tag t-ai">生成AI</span><span class="tag t-ev">イベント</span></div>
+      <h3>JMC、JAPET&amp;CECが主催する生成AI活用や学校情報セキュリティをテーマとした7月18日の無料セミナーに参画</h3>
+      <p class="summary">JMCは、日本教育情報化振興会（JAPET&amp;CEC）が主催する、生成AI活用や学校情報セキュリティをテーマとした無料セミナー「AIが広げる新しい授業と、クラウドが変える先生 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17edujapa/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="教師のためのedtech体験会、「powerpointでここまでできる！～教材づくりの腕を上げよう～」28日開催 edujapa!は、教師のためのedtech体験会「第24回：powerpointでここまでできる！～教材づくりの腕を上げよう～」を6月28日に開催する。 授業準備やプレゼンの資料 […]">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>教師のためのEdTech体験会、「PowerPointでここまでできる！～教材づくりの腕を上げよう～」28日開催</h3>
+      <p class="summary">EduJapa!は、教師のためのEdTech体験会「第24回：PowerPointでここまでできる！～教材づくりの腕を上げよう～」を6月28日に開催する。 授業準備やプレゼンの資料 […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17hdl-edu/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="hdl、ドローン活用した競技型教育活動「ドロカツ大会」の説明会7月13・30日開催 hdlが運営するドロカツ実行委員会は、7月13・30日の2日間、関東と西日本の2会場で、学校・教育機関・教育事業者などを対象に「ドロカツ大会 体験・説明会」を無料開催する。 ドロカ […]">
+      <div class="tags"></div>
+      <h3>HDL、ドローン活用した競技型教育活動「ドロカツ大会」の説明会7月13・30日開催</h3>
+      <p class="summary">HDLが運営するドロカツ実行委員会は、7月13・30日の2日間、関東と西日本の2会場で、学校・教育機関・教育事業者などを対象に「ドロカツ大会 体験・説明会」を無料開催する。 ドロカ […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17mouse-jp-2/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="マウスコンピューター、「親子パソコン組み立て教室」8月14日・15日開催 マウスコンピューターは、小学6年生とその保護者を対象とした体験型イベント「親子パソコン組み立て教室」を8月14日と15日の2日間、長野県飯山市で開催する。 同教室は、親子でパソコン […]">
+      <div class="tags"><span class="tag t-k12">K-12</span><span class="tag t-home">家庭・保護者</span><span class="tag t-ev">イベント</span></div>
+      <h3>マウスコンピューター、「親子パソコン組み立て教室」8月14日・15日開催</h3>
+      <p class="summary">マウスコンピューターは、小学6年生とその保護者を対象とした体験型イベント「親子パソコン組み立て教室」を8月14日と15日の2日間、長野県飯山市で開催する。 同教室は、親子でパソコン […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17vish-7/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="保護者連絡アプリ「コノベル」のvish、「児発管の本音と現場の実際」7月3日開催 vishは、児童発達支援管理責任者（児発管）を対象とした無料オンラインセミナー「児発管の井戸端支援会議！～実際の事例から考える、よりよい支援のカタチ～」を7月3日に開催する。 同セ […]">
+      <div class="tags"><span class="tag t-k12">K-12</span><span class="tag t-home">家庭・保護者</span><span class="tag t-ev">イベント</span></div>
+      <h3>保護者連絡アプリ「コノベル」のVISH、「児発管の本音と現場の実際」7月3日開催</h3>
+      <p class="summary">VISHは、児童発達支援管理責任者（児発管）を対象とした無料オンラインセミナー「児発管の井戸端支援会議！～実際の事例から考える、よりよい支援のカタチ～」を7月3日に開催する。 同セ […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://ict-enews.net/2026/06/17studylab-2/" target="_blank" rel="noopener"
+       data-region="jp" data-source="ICT教育ニュース"
+       data-text="スタディラボ、無料オンラインセミナー「ai時代に教室長が持つべきコーチングスキルとは」23～26日開催 スタディラボは、fceとともに、6月23〜26日の4日間、学習塾などの教育現場で生徒の指導にあたる教室長や講師を対象に、「生徒が自ら動き出す！ai時代に教室長が持つべき最強のコーチ […]">
+      <div class="tags"><span class="tag t-k12">K-12</span><span class="tag t-ev">イベント</span></div>
+      <h3>スタディラボ、無料オンラインセミナー「AI時代に教室長が持つべきコーチングスキルとは」23～26日開催</h3>
+      <p class="summary">スタディラボは、FCEとともに、6月23〜26日の4日間、学習塾などの教育現場で生徒の指導にあたる教室長や講師を対象に、「生徒が自ら動き出す！AI時代に教室長が持つべき最強のコーチ […]</p>
+      <div class="meta-row"><span class="src">🇯🇵 ICT教育ニュース</span><span class="date">2026-06-17</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86431.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【高校受験2027】北海道公立高、学校裁量一覧を公表…傾斜配点は12校 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【高校受験2027】北海道公立高、学校裁量一覧を公表…傾斜配点は12校</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13476.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="神戸市、平日も含めた部活動の地域展開「コベカツ」9月開始 ">
+      <div class="tags"></div>
+      <h3>神戸市、平日も含めた部活動の地域展開「コベカツ」9月開始</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://www.eschoolnews.com/innovative-teaching/2026/06/16/with-students-tuning-out-its-time-to-rethink-the-classroom/" target="_blank" rel="noopener"
+       data-region="global" data-source="eSchool News"
+       data-text="with students tuning out, it’s time to rethink the classroom across classrooms right now, many educators are noticing the same shift: students are even harder to reach than they were just a short time ago. in a recent survey, teachers pointed to rising disengagement as a growing c…">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>With students tuning out, it’s time to rethink the classroom</h3>
+      <p class="summary">Across classrooms right now, many educators are noticing the same shift: Students are even harder to reach than they were just a short time ago. In a recent survey, teachers pointed to rising disengagement as a growing c…</p>
+      <div class="meta-row"><span class="src">🌐 eSchool News</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13475.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】鹿児島県1次、31人増の1,116人が受験…2.11倍 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】鹿児島県1次、31人増の1,116人が受験…2.11倍</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86430.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】小中学生「fmvパソコン組み立て教室」8/22 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】小中学生「FMVパソコン組み立て教室」8/22</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13474.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】相模原市の応募倍率2.9倍…大3生選考に132人 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】相模原市の応募倍率2.9倍…大3生選考に132人</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://www.techlearning.com/technology/ai/bad-ai-policy-is-worse-than-no-policy-at-all-how-to-build-one-that-works" target="_blank" rel="noopener"
+       data-region="global" data-source="Tech &amp; Learning"
+       data-text="bad ai policy is worse than no policy at all. how to build one that works conversations with kevin hogan: schoolai policy analyst sasha luks-morgan breaks down the three pillars every district ai policy needs">
+      <div class="tags"></div>
+      <h3>Bad AI Policy Is Worse Than No Policy at All. How to Build One That Works</h3>
+      <p class="summary">Conversations with Kevin Hogan: SchoolAI policy analyst Sasha Luks-Morgan breaks down the three pillars every district AI policy needs</p>
+      <div class="meta-row"><span class="src">🌐 Tech &amp; Learning</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13473.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="小学校のユニークなノート回収活動を募集「つなげるーぱ！アワード2026」 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>小学校のユニークなノート回収活動を募集「つなげるーぱ！アワード2026」</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86429.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="千葉県立高校の転編入学…千葉や船橋など全日制118校、千葉中は3年生限定 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>千葉県立高校の転編入学…千葉や船橋など全日制118校、千葉中は3年生限定</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13472.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="東京都、探究型アントレプレナーシップ教材を無償提供…先着30校 ">
+      <div class="tags"></div>
+      <h3>東京都、探究型アントレプレナーシップ教材を無償提供…先着30校</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13471.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】福島県の志願者数1,416人…倍率2.1倍 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】福島県の志願者数1,416人…倍率2.1倍</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86428.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】18歳以下無料「のだめカンタービレ」札幌で朗読×オーケストラ公演 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】18歳以下無料「のだめカンタービレ」札幌で朗読×オーケストラ公演</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86427.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【小学校受験】オンライン学校説明会6月…洗足・開智ら10校 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【小学校受験】オンライン学校説明会6月…洗足・開智ら10校</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86426.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】武蔵野大、プログラミングや天体観測など親子向け体験講座8月 ">
+      <div class="tags"><span class="tag t-prog">プログラミング</span><span class="tag t-home">家庭・保護者</span></div>
+      <h3>【夏休み2026】武蔵野大、プログラミングや天体観測など親子向け体験講座8月</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86425.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】関東の工場見学5選…鉛筆・コーラ・造幣局 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】関東の工場見学5選…鉛筆・コーラ・造幣局</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86424.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】都立美術館・博物館6施設が夜間開館「サマーナイトミュージアム」 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】都立美術館・博物館6施設が夜間開館「サマーナイトミュージアム」</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86423.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】小中高生「手づくりレッツノート工房」パナソニック神戸8/1 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】小中高生「手づくりレッツノート工房」パナソニック神戸8/1</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13470.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="教育dx、成功事例から「設計原理」の共有へ…岡山大が新pf開発着手 ">
+      <div class="tags"></div>
+      <h3>教育DX、成功事例から「設計原理」の共有へ…岡山大が新PF開発着手</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13469.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="教職課程に強み専門性、多様な教師集団の育成へ改革…二次まとめ公表 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>教職課程に強み専門性、多様な教師集団の育成へ改革…二次まとめ公表</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86422.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】北海道科学大、夜のキャンパス開放7/24…アニメ制作も ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】北海道科学大、夜のキャンパス開放7/24…アニメ制作も</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86421.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="国際情報オリンピック2028、10年ぶりに日本で開催決定 ">
+      <div class="tags"></div>
+      <h3>国際情報オリンピック2028、10年ぶりに日本で開催決定</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86420.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】金沢工業大、高校生向け「kit数理講座」7/18…先着50名 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】金沢工業大、高校生向け「KIT数理講座」7/18…先着50名</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13468.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="dmm英会話「iknow!」教育機関向けに1年間無料提供…高校受験カテゴリも ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>DMM英会話「iKnow!」教育機関向けに1年間無料提供…高校受験カテゴリも</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86419.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】愛知県岡崎市「英語1dayキャンプ」7月…スピーチ締切6/20 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】愛知県岡崎市「英語1Dayキャンプ」7月…スピーチ締切6/20</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13467.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】神奈川県、夏期試験の応募状況…倍率3.6倍 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】神奈川県、夏期試験の応募状況…倍率3.6倍</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86418.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="22団体出展「学生のためのボランティアexpo 2026」大阪7/5 ">
+      <div class="tags"></div>
+      <h3>22団体出展「学生のためのボランティアEXPO 2026」大阪7/5</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13466.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="金沢工大、高校教員向け「dxハイスクール応援プログラム」7/18・19 ">
+      <div class="tags"><span class="tag t-k12">K-12</span><span class="tag t-teach">教員</span></div>
+      <h3>金沢工大、高校教員向け「DXハイスクール応援プログラム」7/18・19</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86417.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】岡山県の小学生向け職業体験…銀行や病院など8コース無料 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】岡山県の小学生向け職業体験…銀行や病院など8コース無料</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/16/13465.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="上智大×板橋区、外国につながる子供の日本語教育支援 ">
+      <div class="tags"></div>
+      <h3>上智大×板橋区、外国につながる子供の日本語教育支援</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/16/86416.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【大学受験2026】共テ利用選抜、志願者約10万人増…倍率22.8倍に上昇 ">
+      <div class="tags"><span class="tag t-univ">大学</span></div>
+      <h3>【大学受験2026】共テ利用選抜、志願者約10万人増…倍率22.8倍に上昇</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-16</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86415.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】無料で楽しめる関東の工場見学5選…自由研究にも ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】無料で楽しめる関東の工場見学5選…自由研究にも</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86414.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="学校を超えた教員同士の関わりを…teacher’s［shift］ ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>学校を超えた教員同士の関わりを…Teacher’s［Shift］</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86413.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】音楽劇「赤毛のアン」子供870名無料招待 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】音楽劇「赤毛のアン」子供870名無料招待</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13464.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="学校を超えた教員同士の関わりを…teacher’s［shift］ ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>学校を超えた教員同士の関わりを…Teacher’s［Shift］</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://www.eschoolnews.com/educational-leadership/2026/06/15/maybe-we-have-too-much-teacher-training/" target="_blank" rel="noopener"
+       data-region="global" data-source="eSchool News"
+       data-text="maybe we have too much teacher training “maybe we have too much teacher training.” that headline is a sentence i never thought i’d write, given that i run a company built around supporting teachers’ professional growth. but it has been sitting with me since i …">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>Maybe we have too much teacher training</h3>
+      <p class="summary">“Maybe we have too much teacher training.” That headline is a sentence I never thought I’d write, given that I run a company built around supporting teachers’ professional growth. But it has been sitting with me since I …</p>
+      <div class="meta-row"><span class="src">🌐 eSchool News</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86412.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】高校生対象、プログラミング「python quest」先着100名 ">
+      <div class="tags"><span class="tag t-prog">プログラミング</span><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】高校生対象、プログラミング「Python quest」先着100名</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86411.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="未来のなでしこへの第一歩…jfa「first touch」8/2島根会場 ">
+      <div class="tags"></div>
+      <h3>未来のなでしこへの第一歩…JFA「First Touch」8/2島根会場</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13463.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="大学発ベンチャー数ランキング、東大595社で首位…名大も増加顕著 ">
+      <div class="tags"><span class="tag t-univ">大学</span></div>
+      <h3>大学発ベンチャー数ランキング、東大595社で首位…名大も増加顕著</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://www.techlearning.com/technology/ai/a-day-in-the-life-of-a-principal-using-ai" target="_blank" rel="noopener"
+       data-region="global" data-source="Tech &amp; Learning"
+       data-text="a day in the life of a principal using ai how one school principal uses ai to save time on administrative tasks that can be better spent with students and staff">
+      <div class="tags"></div>
+      <h3>A Day In The Life Of A Principal Using AI</h3>
+      <p class="summary">How one school principal uses AI to save time on administrative tasks that can be better spent with students and staff</p>
+      <div class="meta-row"><span class="src">🌐 Tech &amp; Learning</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://www.techlearning.com/technology/the-presentation-station-should-belong-to-the-space-not-the-speaker" target="_blank" rel="noopener"
+       data-region="global" data-source="Tech &amp; Learning"
+       data-text="the presentation station should belong to the space, not the speaker a well-run event space should not depend on every speaker plugging in, pairing, restarting, authenticating, and hoping for the best.">
+      <div class="tags"></div>
+      <h3>The Presentation Station Should Belong to the Space, Not the Speaker</h3>
+      <p class="summary">A well-run event space should not depend on every speaker plugging in, pairing, restarting, authenticating, and hoping for the best.</p>
+      <div class="meta-row"><span class="src">🌐 Tech &amp; Learning</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86410.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="2級建築施工管理技士 前期一次検定「web採点」日建学院6/22まで ">
+      <div class="tags"></div>
+      <h3>2級建築施工管理技士 前期一次検定「WEB採点」日建学院6/22まで</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13462.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="福岡工大、インドの大学・it企業と連携協定…次世代リーダー育成へ ">
+      <div class="tags"><span class="tag t-univ">大学</span></div>
+      <h3>福岡工大、インドの大学・IT企業と連携協定…次世代リーダー育成へ</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86409.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="目指せ未来のw杯代表「jfaユニクロサッカーキッズ」参加者募集 ">
+      <div class="tags"></div>
+      <h3>目指せ未来のW杯代表「JFAユニクロサッカーキッズ」参加者募集</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86408.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="小学生対象、鉄道新聞コンクール…参加賞を全員に贈呈 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>小学生対象、鉄道新聞コンクール…参加賞を全員に贈呈</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13461.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="学校給食の国産食材9割、鳥取98.4％でトップ…文科省 ">
+      <div class="tags"></div>
+      <h3>学校給食の国産食材9割、鳥取98.4％でトップ…文科省</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13460.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="ai活用加速へ、文科省の大規模集積システムに1件を採択 ">
+      <div class="tags"></div>
+      <h3>AI活用加速へ、文科省の大規模集積システムに1件を採択</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86407.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】土木学会、オープンキャンパス7/25…自由研究のヒントにも ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】土木学会、オープンキャンパス7/25…自由研究のヒントにも</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13459.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="日本語教師、学び直し・復帰促進の研修動画12本を無料公開…文科省 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>日本語教師、学び直し・復帰促進の研修動画12本を無料公開…文科省</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86406.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】羽田空港見学会、管制塔や格納庫公開…全14回 ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】羽田空港見学会、管制塔や格納庫公開…全14回</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13458.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="デジタル教科書法成立、紙とデジタル活用指針策定へ…文科相6/12会見 ">
+      <div class="tags"></div>
+      <h3>デジタル教科書法成立、紙とデジタル活用指針策定へ…文科相6/12会見</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86405.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="都内私立の転・編入試験（1学期末）中学81校・高校96校実施 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>都内私立の転・編入試験（1学期末）中学81校・高校96校実施</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13457.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用2027】山梨県、志願倍率2.11倍…大3生240人志願 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用2027】山梨県、志願倍率2.11倍…大3生240人志願</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86404.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】n高グループ、10日間の国際教育プログラム…高校生募集 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】N高グループ、10日間の国際教育プログラム…高校生募集</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86403.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】親子で学ぶ「議事堂見学と投票体験」埼玉8/18 ">
+      <div class="tags"><span class="tag t-home">家庭・保護者</span></div>
+      <h3>【夏休み2026】親子で学ぶ「議事堂見学と投票体験」埼玉8/18</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86402.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【高校野球2026夏】東・西東京大会組合せ決定、関東第一は7/13初戦 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【高校野球2026夏】東・西東京大会組合せ決定、関東第一は7/13初戦</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86401.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】サッカーw杯熱狂の今！小学生向け自由研究テーマアイデア集 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】サッカーW杯熱狂の今！小学生向け自由研究テーマアイデア集</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86400.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】親子縄文土器作り…都立埋蔵文化財センター ">
+      <div class="tags"><span class="tag t-home">家庭・保護者</span></div>
+      <h3>【夏休み2026】親子縄文土器作り…都立埋蔵文化財センター</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86399.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【大学受験2026】阪公大 高校別合格数、top10に公立8校 ">
+      <div class="tags"><span class="tag t-univ">大学</span><span class="tag t-k12">K-12</span></div>
+      <h3>【大学受験2026】阪公大 高校別合格数、TOP10に公立8校</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13456.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="国立と私立大の学費格差を検討、公開研究会7/6オンライン ">
+      <div class="tags"></div>
+      <h3>国立と私立大の学費格差を検討、公開研究会7/6オンライン</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/15/86398.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【中学受験】今週末行ける中高一貫「学校見学」6/20-21…明大明治など10校 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【中学受験】今週末行ける中高一貫「学校見学」6/20-21…明大明治など10校</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://edsurge.com/news/i-built-an-ai-grading-tool-then-a-student-thanked-me-for-words-i-didnt-write" target="_blank" rel="noopener"
+       data-region="global" data-source="EdSurge"
+       data-text="i built an ai grading tool. then a student thanked me for words i didn’t write. how to keep teachers in charge when ai does the grading.">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>I Built an AI Grading Tool. Then a Student Thanked Me for Words I Didn’t Write.</h3>
+      <p class="summary">How to keep teachers in charge when AI does the grading.</p>
+      <div class="meta-row"><span class="src">🌐 EdSurge</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/15/13455.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="デジタル教科書正式導入、小学校に「情報の領域」付加…教育業界ニュースまとめ読み ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>デジタル教科書正式導入、小学校に「情報の領域」付加…教育業界ニュースまとめ読み</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-15</span></div>
+    </a><a class="card" href="https://edtechmagazine.com/k12/article/2026/06/deepfakes-education-cyberbullying-age-ai-perfcon" target="_blank" rel="noopener"
+       data-region="global" data-source="EdTech Magazine"
+       data-text="deepfakes in education: cyberbullying in the age of ai in a k–12 setting, deepfakes hold a lot of power. these falsified images or videos, virtually impossible to identify with an untrained eye, can be wielded to harm educators’ reputations, cyberbully vulnerable students, a…">
+      <div class="tags"></div>
+      <h3>Deepfakes in Education: Cyberbullying in the Age of AI</h3>
+      <p class="summary">In a K–12 setting, deepfakes hold a lot of power. These falsified images or videos, virtually impossible to identify with an untrained eye, can be wielded to harm educators’ reputations, cyberbully vulnerable students, a…</p>
+      <div class="meta-row"><span class="src">🌐 EdTech Magazine</span><span class="date">2026-06-13</span></div>
+    </a><a class="card" href="https://edtechmagazine.com/k12/article/2026/06/ctem-cyber-risk-management-k12-districts" target="_blank" rel="noopener"
+       data-region="global" data-source="EdTech Magazine"
+       data-text="ctem offers a better way to manage cyber risk in k–12 lately, school-related data breaches seem to keep coming. powerschool and canvas made major headlines this year. countless smaller incidents may not hit the news, but they disrupt instruction and expose sensitive student…">
+      <div class="tags"></div>
+      <h3>CTEM Offers a Better Way to Manage Cyber Risk in K–12</h3>
+      <p class="summary">Lately, school-related data breaches seem to keep coming. PowerSchool and Canvas made major headlines this year. Countless smaller incidents may not hit the news, but they disrupt instruction and expose sensitive student…</p>
+      <div class="meta-row"><span class="src">🌐 EdTech Magazine</span><span class="date">2026-06-13</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13454.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【クレーム対応q＆a】緊急時に連絡アプリが使えない ">
+      <div class="tags"></div>
+      <h3>【クレーム対応Q＆A】緊急時に連絡アプリが使えない</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86397.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="栃木県民の日記念イベント6/13…動物ふれあいやゲーム体験、県内外の施設優待も ">
+      <div class="tags"><span class="tag t-ev">イベント</span></div>
+      <h3>栃木県民の日記念イベント6/13…動物ふれあいやゲーム体験、県内外の施設優待も</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://www.eschoolnews.com/educational-leadership/2026/06/12/leading-in-the-in-between-a-multi-track-approach-to-leadership-growth/" target="_blank" rel="noopener"
+       data-region="global" data-source="eSchool News"
+       data-text="leading in the in-between: a multi-track approach to leadership growth there is a period in the school leadership journey that we do not talk about enough: the time between earning an administrative license and actually becoming a school leader.">
+      <div class="tags"></div>
+      <h3>Leading in the in-between: A multi-track approach to leadership growth</h3>
+      <p class="summary">There is a period in the school leadership journey that we do not talk about enough: the time between earning an administrative license and actually becoming a school leader.</p>
+      <div class="meta-row"><span class="src">🌐 eSchool News</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13453.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="筑波大・千葉大など10校が申請…文科省「大学院教育拠点創出事業」 ">
+      <div class="tags"><span class="tag t-univ">大学</span></div>
+      <h3>筑波大・千葉大など10校が申請…文科省「大学院教育拠点創出事業」</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86396.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="「送り出してよかった」。地方から関西大学へ進学した学生と保護者が語る4年間の成長 ">
+      <div class="tags"><span class="tag t-univ">大学</span><span class="tag t-home">家庭・保護者</span></div>
+      <h3>「送り出してよかった」。地方から関西大学へ進学した学生と保護者が語る4年間の成長</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://www.techlearning.com/learning/leadership/integrating-augmentative-and-alternative-communication-aac-as-an-inclusive-practice" target="_blank" rel="noopener"
+       data-region="global" data-source="Tech &amp; Learning"
+       data-text="integrating augmentative and alternative communication (aac) as an inclusive practice innovative leader award - kimberly zajac discusses why digital accessibility is important beyond compliance">
+      <div class="tags"></div>
+      <h3>Integrating Augmentative and Alternative Communication (AAC) As An Inclusive Practice</h3>
+      <p class="summary">Innovative Leader Award - Kimberly Zajac discusses why digital accessibility is important beyond compliance</p>
+      <div class="meta-row"><span class="src">🌐 Tech &amp; Learning</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13452.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="秦野・大磯高に教職科目を新設、先生志望を支援…神奈川県 ">
+      <div class="tags"></div>
+      <h3>秦野・大磯高に教職科目を新設、先生志望を支援…神奈川県</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86395.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】無料で学べる関東の工場見学5選…醤油やラスク ">
+      <div class="tags"></div>
+      <h3>【夏休み2026】無料で学べる関東の工場見学5選…醤油やラスク</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13451.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】岡山県、80人増の1,663人出願…倍率4.3倍 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】岡山県、80人増の1,663人出願…倍率4.3倍</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86394.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="6月の満月「ストロベリームーン」30日に見ごろ…夏至後最初の満月 ">
+      <div class="tags"></div>
+      <h3>6月の満月「ストロベリームーン」30日に見ごろ…夏至後最初の満月</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13450.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】埼玉県、全体倍率2.9倍に低下…大3生は289人増 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】埼玉県、全体倍率2.9倍に低下…大3生は289人増</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86393.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="千葉県民の日6/15、宿泊施設や博物館で子供の利用料が無料 ">
+      <div class="tags"></div>
+      <h3>千葉県民の日6/15、宿泊施設や博物館で子供の利用料が無料</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13449.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】山口県の第1次試験、416人合格 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】山口県の第1次試験、416人合格</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86392.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【高校野球2026夏】14都道府県の15地方大会j:com生中継 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【高校野球2026夏】14都道府県の15地方大会J:COM生中継</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13448.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="東京都子育て支援員研修、第2期受講生4コースで募集 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>東京都子育て支援員研修、第2期受講生4コースで募集</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13447.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="ガチャで日本文化を探究、小中学校向け「sparke」受付開始 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>ガチャで日本文化を探究、小中学校向け「SPARKE」受付開始</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86391.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【大学受験2026】長崎大で合否判定ミス、共通テスト点数を算入せず…1人が追加合格 ">
+      <div class="tags"><span class="tag t-univ">大学</span></div>
+      <h3>【大学受験2026】長崎大で合否判定ミス、共通テスト点数を算入せず…1人が追加合格</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13446.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="ネットの危険…教職員向け情報モラルセミナー ">
+      <div class="tags"><span class="tag t-ev">イベント</span></div>
+      <h3>ネットの危険…教職員向け情報モラルセミナー</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13445.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用】福岡市1,632人志願…倍率5.6倍に上昇 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用】福岡市1,632人志願…倍率5.6倍に上昇</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86390.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="神奈川私立中高「2学期」転編入学…鎌倉学園、横浜女学院など71校 ">
+      <div class="tags"></div>
+      <h3>神奈川私立中高「2学期」転編入学…鎌倉学園、横浜女学院など71校</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86389.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="「i am like apple.」⁉ 中学英語でつまずきやすい「be動詞」をしっかり理解するには ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>「I am like apple.」⁉ 中学英語でつまずきやすい「be動詞」をしっかり理解するには</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13444.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="中教審、次期指導要領「体育」の骨子案…多様な楽しみ方重視 ">
+      <div class="tags"></div>
+      <h3>中教審、次期指導要領「体育」の骨子案…多様な楽しみ方重視</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13443.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="千葉県、学校の自殺予防対策…段階ごと対応を整理 ">
+      <div class="tags"></div>
+      <h3>千葉県、学校の自殺予防対策…段階ごと対応を整理</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86388.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【夏休み2026】髙尾山で修行体験、小学生向け1泊2日合宿…6/26締切 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【夏休み2026】髙尾山で修行体験、小学生向け1泊2日合宿…6/26締切</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13442.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="次期学習指導要領、部活動の意義維持し「地域展開」を制度化 ">
+      <div class="tags"></div>
+      <h3>次期学習指導要領、部活動の意義維持し「地域展開」を制度化</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://resemom.jp/article/2026/06/12/86387.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リセマム"
+       data-text="【中学受験2027】東京都立中高一貫校の入試日程…一般枠2/3 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>【中学受験2027】東京都立中高一貫校の入試日程…一般枠2/3</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リセマム</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13441.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="女子stem支援に21社参画、愛知の3者が連携協定 ">
+      <div class="tags"></div>
+      <h3>女子STEM支援に21社参画、愛知の3者が連携協定</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/12/13440.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【edix2026】不登校は未来へのチャージタイム…中川翔子氏×石井しこう氏 ">
+      <div class="tags"><span class="tag t-soc">不登校支援</span></div>
+      <h3>【EDIX2026】不登校は未来へのチャージタイム…中川翔子氏×石井しこう氏</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://edsurge.com/news/ai-wont-replace-educators-but-it-is-changing-how-students-learn" target="_blank" rel="noopener"
+       data-region="global" data-source="EdSurge"
+       data-text="ai won’t replace educators. but it is changing how students learn. the question for educators: how to know when ai supports real learning.">
+      <div class="tags"></div>
+      <h3>AI Won’t Replace Educators. But It is Changing How Students Learn.</h3>
+      <p class="summary">The question for educators: How to know when AI supports real learning.</p>
+      <div class="meta-row"><span class="src">🌐 EdSurge</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://edtechmagazine.com/k12/article/2026/06/rethinking-cellphone-management-k-12-classrooms" target="_blank" rel="noopener"
+       data-region="global" data-source="EdTech Magazine"
+       data-text="rethinking cellphone management in k–12 classrooms across k–12 schools, the conversation around student device use has shifted from whether phones belong in classrooms to how schools can manage them in a way that supports learning. as digital devices become increasingly …">
+      <div class="tags"></div>
+      <h3>Rethinking Cellphone Management in K–12 Classrooms</h3>
+      <p class="summary">Across K–12 schools, the conversation around student device use has shifted from whether phones belong in classrooms to how schools can manage them in a way that supports learning. As digital devices become increasingly …</p>
+      <div class="meta-row"><span class="src">🌐 EdTech Magazine</span><span class="date">2026-06-12</span></div>
+    </a><a class="card" href="https://www.eschoolnews.com/innovative-teaching/2026/06/11/the-hidden-skill-many-kids-are-losing/" target="_blank" rel="noopener"
+       data-region="global" data-source="eSchool News"
+       data-text="the hidden skill many kids are losing once upon a time. for generations, those four words were an invitation. children leaned in because a story was beginning. they would listen closely, follow the characters, and stay with the plot until the end.">
+      <div class="tags"></div>
+      <h3>The hidden skill many kids are losing</h3>
+      <p class="summary">Once upon a time. For generations, those four words were an invitation. Children leaned in because a story was beginning. They would listen closely, follow the characters, and stay with the plot until the end.</p>
+      <div class="meta-row"><span class="src">🌐 eSchool News</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13439.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="hisとncn、米国大学奨学金制度の普及へ…返済不要・授業料半額免除も ">
+      <div class="tags"><span class="tag t-univ">大学</span></div>
+      <h3>HISとNCN、米国大学奨学金制度の普及へ…返済不要・授業料半額免除も</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13438.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="貧困・教育格差に直面する子供を支援「nagaseこどもみらい財団」設立 ">
+      <div class="tags"></div>
+      <h3>貧困・教育格差に直面する子供を支援「NAGASEこどもみらい財団」設立</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13437.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="jx金属、学生研究支援プログラム…研究材料を無償提供 ">
+      <div class="tags"></div>
+      <h3>JX金属、学生研究支援プログラム…研究材料を無償提供</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13436.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="世界8万人超が参加するロボコンftc、中高生チーム募集 ">
+      <div class="tags"></div>
+      <h3>世界8万人超が参加するロボコンFTC、中高生チーム募集</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13435.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="小学校に「情報の領域」付加、中学は新教科創設へ…次期指導要領 ">
+      <div class="tags"><span class="tag t-k12">K-12</span></div>
+      <h3>小学校に「情報の領域」付加、中学は新教科創設へ…次期指導要領</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13434.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="授業改善・校務dxに役立つ「プチ学習会」6月…文科省 ">
+      <div class="tags"></div>
+      <h3>授業改善・校務DXに役立つ「プチ学習会」6月…文科省</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13433.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="男女共同参画機構、オンライン研修を無料開講…基礎から分野別研修まで ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>男女共同参画機構、オンライン研修を無料開講…基礎から分野別研修まで</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://reseed.resemom.jp/article/2026/06/11/13432.html" target="_blank" rel="noopener"
+       data-region="jp" data-source="リシード(ReseEd)"
+       data-text="【教員採用2027】横浜市、既合格者233人に…春試験は116人合格・倍率2.2倍 ">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>【教員採用2027】横浜市、既合格者233人に…春試験は116人合格・倍率2.2倍</h3>
+      
+      <div class="meta-row"><span class="src">🇯🇵 リシード(ReseEd)</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://edsurge.com/news/what-tiktok-is-teaching-future-teachers-that-we-arent" target="_blank" rel="noopener"
+       data-region="global" data-source="EdSurge"
+       data-text="what tiktok is teaching future teachers (that we aren’t) a new educational epistemology for today's teachers.">
+      <div class="tags"><span class="tag t-teach">教員</span></div>
+      <h3>What TikTok Is Teaching Future Teachers (That We Aren’t)</h3>
+      <p class="summary">A new educational epistemology for today's teachers.</p>
+      <div class="meta-row"><span class="src">🌐 EdSurge</span><span class="date">2026-06-11</span></div>
+    </a><a class="card" href="https://edtechmagazine.com/k12/article/2026/06/4-tips-upgrading-k-12-physical-security-systems" target="_blank" rel="noopener"
+       data-region="global" data-source="EdTech Magazine"
+       data-text="4 tips for upgrading k–12 physical security systems weapon detection solutions have evolved from locked doors and metal detectors to ai-powered systems. what were previously one-off purchases are now integrated with a broader, layered approach to safety that balances secu…">
+      <div class="tags"></div>
+      <h3>4 Tips for Upgrading K–12 Physical Security Systems</h3>
+      <p class="summary">Weapon detection solutions have evolved from locked doors and metal detectors to AI-powered systems. What were previously one-off purchases are now integrated with a broader, layered approach to safety that balances secu…</p>
+      <div class="meta-row"><span class="src">🌐 EdTech Magazine</span><span class="date">2026-06-11</span></div>
+    </a></div>
 
   <details>
     <summary>📊 ソース取得ステータス（9/9 成功）</summary>
     <ul><li><span class="ok">●</span> 🇯🇵 ICT教育ニュース — 期間内 <b>20</b>件（全20件取得）</li><li><span class="ok">●</span> 🇯🇵 リセマム — 期間内 <b>50</b>件（全50件取得）</li><li><span class="ok">●</span> 🇯🇵 リシード(ReseEd) — 期間内 <b>50</b>件（全50件取得）</li><li><span class="ok">●</span> 🌐 EdSurge — 期間内 <b>3</b>件（全50件取得）</li><li><span class="ok">●</span> 🌐 eSchool News — 期間内 <b>4</b>件（全200件取得）</li><li><span class="ok">●</span> 🌐 EdTech Magazine — 期間内 <b>4</b>件（全10件取得）</li><li><span class="ok">●</span> 🌐 Tech &amp; Learning — 期間内 <b>4</b>件（全50件取得）</li><li><span class="ok">●</span> 🌐 Education Week — 期間内 <b>0</b>件（全20件取得）</li><li><span class="ok">●</span> 🌐 TechCrunch EdTech — 期間内 <b>0</b>件（全20件取得）</li></ul>
   </details>
 </div>
-<footer>EdTech News Collector — RSSから自動収集。記事リンクは各媒体の元ページへ移動します。</footer>
+<footer>EdTech WEEKLY — RSSから自動収集 / バズワードはタイトル＋要約から頻度抽出 / 各記事は各媒体の元ページへ</footer>
+
 <script>
-  const rows = [...document.querySelectorAll('#list tr')];
+  // テーマ切替
+  const themeBtn = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  const saved = localStorage.getItem('edtech-theme');
+  if (saved) root.dataset.theme = saved;
+  themeBtn.textContent = root.dataset.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+  themeBtn.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    themeBtn.textContent = root.dataset.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+    localStorage.setItem('edtech-theme', root.dataset.theme);
+  });
+
+  // フィルタ
+  const cards = [...document.querySelectorAll('#list .card')];
   const countEl = document.getElementById('count');
+  const searchEl = document.getElementById('search');
+  const srcEl = document.getElementById('srcFilter');
   let region = 'all';
   function apply() {
-    const q = document.getElementById('search').value.trim().toLowerCase();
-    const src = document.getElementById('srcFilter').value;
+    const q = searchEl.value.trim().toLowerCase();
+    const src = srcEl.value;
     let n = 0;
-    rows.forEach(r => {
-      const okR = region === 'all' || r.dataset.region === region;
-      const okS = !src || r.dataset.source === src;
-      const okQ = !q || r.dataset.text.includes(q);
+    cards.forEach(c => {
+      const okR = region === 'all' || c.dataset.region === region;
+      const okS = !src || c.dataset.source === src;
+      const okQ = !q || c.dataset.text.includes(q);
       const show = okR && okS && okQ;
-      r.style.display = show ? '' : 'none';
+      c.style.display = show ? '' : 'none';
       if (show) n++;
     });
-    countEl.textContent = n + '件を表示中';
+    countEl.textContent = n + ' 件を表示中';
   }
   document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
     document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('active'));
     b.classList.add('active'); region = b.dataset.f; apply();
   }));
-  document.getElementById('search').addEventListener('input', apply);
-  document.getElementById('srcFilter').addEventListener('change', apply);
+  searchEl.addEventListener('input', apply);
+  srcEl.addEventListener('change', apply);
+
+  // バズワードクリック→検索
+  document.querySelectorAll('.buzz-word').forEach(b => b.addEventListener('click', () => {
+    searchEl.value = b.dataset.q;
+    region = 'all';
+    document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('active', x.dataset.f === 'all'));
+    apply();
+    searchEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  }));
+
+  // ニュースガチャ
+  document.getElementById('gacha').addEventListener('click', () => {
+    const visible = cards.filter(c => c.style.display !== 'none');
+    const pool = visible.length ? visible : cards;
+    if (!pool.length) return;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    document.querySelectorAll('.card.flash').forEach(c => c.classList.remove('flash'));
+    pick.classList.add('flash');
+    pick.scrollIntoView({ behavior:'smooth', block:'center' });
+  });
+
   apply();
 </script>
 </body>
