@@ -921,11 +921,6 @@ function renderHtml({ items, from, to, status, fmt, isServer = false }) {
 
   ${heroHtml}
 
-  <div class="panels">
-    ${buzzHtml}
-    ${rankHtml}
-  </div>
-
   ${bingoHtml}
 
   <div class="gacha-row">
@@ -941,6 +936,11 @@ function renderHtml({ items, from, to, status, fmt, isServer = false }) {
     <div class="gacha-meta" id="gachaMeta"></div>
     <div class="gacha-summary" id="gachaSummary"></div>
     <a class="open-link" id="gachaLink" target="_blank" rel="noopener">この記事を読む →</a>
+  </div>
+
+  <div class="panels">
+    ${buzzHtml}
+    ${rankHtml}
   </div>
 
   <div class="toolbar">
