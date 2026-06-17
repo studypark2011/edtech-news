@@ -611,20 +611,52 @@ function renderHtml({ items, from, to, status, fmt }) {
   .gacha-sub { font-size:12px; color:var(--sub); margin-top:8px; font-weight:600; }
 
   /* ガチャモーダル */
-  .gacha-overlay { position:fixed; inset:0; background:rgba(15,10,30,.6); backdrop-filter:blur(8px);
+  .gacha-overlay { position:fixed; inset:0; background:rgba(15,10,30,.78);
     display:none; place-items:center; z-index:50; animation: fadein .25s ease; }
   .gacha-overlay.show { display:grid; }
   @keyframes fadein { from{opacity:0} to{opacity:1} }
-  .gacha-box { background:var(--card); border-radius:24px; padding:32px; max-width:520px; width:90%;
-    text-align:center; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.4);
+  .gacha-box { background:var(--card); border-radius:28px; padding:36px 32px 32px; max-width:540px; width:92%;
+    text-align:center; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.5);
+    border:4px solid var(--line);
     animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
-  .gacha-box .close { position:absolute; top:12px; right:14px; background:none; border:none; font-size:24px; cursor:pointer; color:var(--sub); }
-  .gacha-rarity { font-size:48px; font-weight:900; margin:8px 0 4px; animation: pop .6s cubic-bezier(.34,1.56,.64,1); }
-  .gacha-box h3 { font-size:20px; margin:8px 0 6px; font-weight:900; }
-  .gacha-box p { color:var(--sub); margin:0 0 16px; font-size:13.5px; }
+  .gacha-box .close { position:absolute; top:12px; right:14px; background:#fff; border:2px solid var(--line);
+    width:36px; height:36px; border-radius:50%; font-size:20px; line-height:1; cursor:pointer; color:var(--ink); font-weight:900; }
+  .gacha-get-label { display:inline-block; font-size:13px; font-weight:900; letter-spacing:.3em; color:#fff;
+    background:linear-gradient(135deg,var(--gold),var(--hot)); padding:5px 18px; border-radius:99px;
+    margin-bottom:14px; animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
+  .gacha-rarity-big {
+    font-size:96px; font-weight:900; margin:6px 0 10px; line-height:1; letter-spacing:.04em;
+    animation: rarityPop .8s cubic-bezier(.34,1.7,.4,1);
+    text-shadow: 0 6px 30px rgba(0,0,0,.2);
+  }
+  @keyframes rarityPop {
+    0% { transform: scale(.3) rotate(-30deg); opacity:0; }
+    60%{ transform: scale(1.25) rotate(8deg); opacity:1; }
+    100%{ transform: scale(1) rotate(0); opacity:1; }
+  }
+  .gacha-box h3 { font-size:22px; line-height:1.5; margin:14px 16px 8px; font-weight:900; color:var(--ink); }
+  .gacha-box .gacha-meta { color:var(--sub); font-size:13px; font-weight:700; margin:0 0 8px; }
+  .gacha-box .gacha-summary { color:var(--sub); margin:0 16px 20px; font-size:13px; line-height:1.65;
+    background:rgba(0,0,0,.03); border-radius:12px; padding:10px 14px; max-height:80px; overflow:hidden; }
+  [data-theme="dark"] .gacha-box .gacha-summary { background:rgba(255,255,255,.05); }
   .gacha-box .open-link { display:inline-block; background:linear-gradient(135deg,var(--hot),var(--violet));
-    color:#fff; padding:12px 24px; border-radius:999px; font-weight:800; box-shadow:0 8px 20px -6px rgba(255,45,111,.5); }
-  .gacha-box .open-link:hover { transform:scale(1.05); }
+    color:#fff; padding:14px 28px; border-radius:999px; font-weight:900; font-size:15px;
+    box-shadow:0 10px 24px -6px rgba(255,45,111,.5); transition: transform .15s; }
+  .gacha-box .open-link:hover { transform:scale(1.06); }
+  /* レアリティごとの枠＋背景アクセント */
+  .gacha-box.r-ssr { border-color:var(--gold); background:
+      radial-gradient(ellipse at top, rgba(251,191,36,.25), transparent 60%), var(--card); }
+  .gacha-box.r-ssr .gacha-rarity-big { color:#b45309; text-shadow: 0 0 30px rgba(251,191,36,.7), 0 6px 12px rgba(0,0,0,.15);
+    animation: rarityPop .8s cubic-bezier(.34,1.7,.4,1), shineSsr 1.6s ease-in-out infinite; }
+  @keyframes shineSsr { 0%,100%{ filter:brightness(1) } 50%{ filter:brightness(1.3) } }
+  .gacha-box.r-sr  { border-color:var(--violet); background:
+      radial-gradient(ellipse at top, rgba(168,85,247,.18), transparent 60%), var(--card); }
+  .gacha-box.r-sr  .gacha-rarity-big { color:var(--violet); text-shadow: 0 0 22px rgba(168,85,247,.55); }
+  .gacha-box.r-r   { border-color:var(--azure); background:
+      radial-gradient(ellipse at top, rgba(6,182,212,.16), transparent 60%), var(--card); }
+  .gacha-box.r-r   .gacha-rarity-big { color:var(--azure); }
+  .gacha-box.r-n   .gacha-rarity-big { color:#6b7280; }
+  /* カードのrarityチップは従来通り */
   .r-ssr .rarity { background:linear-gradient(135deg,#fff5b1,#ffd84a); color:#7c4a02; }
   .r-sr  .rarity { background:linear-gradient(135deg,#e9d5ff,#a855f7); color:#fff; }
   .r-r   .rarity { background:linear-gradient(135deg,#bae6fd,#0ea5e9); color:#fff; }
@@ -800,10 +832,12 @@ function renderHtml({ items, from, to, status, fmt }) {
 <div class="gacha-overlay" id="gachaOverlay">
   <div class="gacha-box" id="gachaBox">
     <button class="close" id="gachaClose" type="button">×</button>
-    <div class="gacha-rarity" id="gachaRarity">✨</div>
+    <div class="gacha-get-label">🎉 GET!</div>
+    <div class="gacha-rarity-big" id="gachaRarity">✨ SSR</div>
     <h3 id="gachaTitle"></h3>
-    <p id="gachaSummary"></p>
-    <a class="open-link" id="gachaLink" target="_blank" rel="noopener">記事を読む →</a>
+    <div class="gacha-meta" id="gachaMeta"></div>
+    <div class="gacha-summary" id="gachaSummary"></div>
+    <a class="open-link" id="gachaLink" target="_blank" rel="noopener">この記事を読む →</a>
   </div>
 </div>
 
@@ -1066,8 +1100,13 @@ function renderHtml({ items, from, to, status, fmt }) {
     box.classList.remove('r-ssr','r-sr','r-r','r-n'); box.classList.add('r-' + rar.toLowerCase());
     document.getElementById('gachaRarity').textContent = rarMap[rar];
     document.getElementById('gachaTitle').textContent = pick.dataset.title;
+    const flag = pick.dataset.region === 'jp' ? '🇯🇵' : '🌐';
+    document.getElementById('gachaMeta').textContent = flag + ' ' + pick.dataset.source;
     const summary = pick.querySelector('.summary');
-    document.getElementById('gachaSummary').textContent = summary ? summary.textContent : '';
+    const sumEl = document.getElementById('gachaSummary');
+    if (summary && summary.textContent.trim()) {
+      sumEl.textContent = summary.textContent; sumEl.style.display = '';
+    } else { sumEl.style.display = 'none'; }
     document.getElementById('gachaLink').href = pick.dataset.link;
     overlay.classList.add('show');
     if (rar === 'SSR') { confetti(); award('ssr'); }
