@@ -585,10 +585,12 @@ function renderHtml({ items, from, to, status, fmt, isServer = false }) {
   }
   .period-panel .pp-submit:hover { transform:scale(1.05); }
   .period-panel .pp-static-note {
-    color:var(--sub); font-size:12px; font-weight:600; margin-left:auto;
-    background:#fef9c3; padding:6px 14px; border-radius:99px; border:2px solid #fde68a;
+    color:#92400e; font-size:13px; font-weight:800; margin-left:auto;
+    background:linear-gradient(135deg,#fef9c3,#fde68a); padding:8px 16px; border-radius:99px; border:2px solid #f59e0b;
+    display:flex; align-items:center; gap:6px;
   }
-  [data-theme="dark"] .period-panel .pp-static-note { background:#3a3015; border-color:#5b4a1a; color:#fde68a; }
+  [data-theme="dark"] .period-panel .pp-static-note { background:linear-gradient(135deg,#3a3015,#4a3a18); border-color:#a16207; color:#fde68a; }
+  .period-panel .pp-static-note code { background:rgba(0,0,0,.1); padding:1px 6px; border-radius:6px; font-size:11px; }
   .period-panel.loading { opacity:.6; pointer-events:none; }
   .period-panel.loading::after {
     content:"取得中..."; color:var(--hot); font-weight:900; margin-left:8px;
@@ -898,7 +900,7 @@ function renderHtml({ items, from, to, status, fmt, isServer = false }) {
   </div>
   ${isServer
     ? `<button type="submit" class="pp-submit">🔄 最新を取得</button>`
-    : `<span class="pp-static-note">📌 期間変更は <code>node fetch-news.js --serve</code> で起動してください</span>`}
+    : `<span class="pp-static-note">⚠️ この公開サイトは静的版です。期間変更にはローカルで <code>node fetch-news.js --serve</code></span>`}
 </form>
 
 <!-- プレイヤーステータスバー（読了で経験値が貯まる！） -->
@@ -994,6 +996,14 @@ function renderHtml({ items, from, to, status, fmt, isServer = false }) {
   function fmtIso(d) {
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
+  function staticAlert(days) {
+    const cmd = days ? '  node fetch-news.js --days ' + days : '  node fetch-news.js --serve';
+    alert('🔒 期間変更にはサーバーモードが必要です（RSSのCORS制限のため）。\\n\\n' +
+          '【方法1】 サーバー起動.bat をダブルクリック\\n' +
+          '【方法2】 ターミナルで:\\n' + cmd + '\\n\\n' +
+          'GitHubのソースから cloneして実行してください: \\n' +
+          'https://github.com/studypark2011/edtech-news');
+  }
   document.querySelectorAll('.pp-preset').forEach(b => b.addEventListener('click', () => {
     const days = parseInt(b.dataset.days, 10);
     const to = new Date(); to.setHours(0,0,0,0);
@@ -1001,12 +1011,16 @@ function renderHtml({ items, from, to, status, fmt, isServer = false }) {
     ppFrom.value = fmtIso(from);
     ppTo.value = fmtIso(to);
     if (isServerMode) periodPanel.requestSubmit();
+    else staticAlert(days);
   }));
+  // 日付入力直接変更時も静的モードならアラート
+  if (!isServerMode) {
+    [ppFrom, ppTo].forEach(el => el.addEventListener('change', () => staticAlert()));
+  }
   if (isServerMode) {
     periodPanel.addEventListener('submit', () => { periodPanel.classList.add('loading'); });
   } else {
-    // 静的版：送信ブロックして注意表示
-    periodPanel.addEventListener('submit', e => { e.preventDefault(); alert('期間変更は --serve モードでのみ可能です。\\nターミナルで: node fetch-news.js --serve'); });
+    periodPanel.addEventListener('submit', e => { e.preventDefault(); staticAlert(); });
   }
 
   // ===== テーマ =====
